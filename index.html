@@ -449,38 +449,65 @@ async function loadCMUDict() {
                 }
                 const text = await response.text();
                 const lines = text.split('\n');
-                console.log(`DEBUG: CMU Dict file has ${lines.length} lines.`); // NEW LOG
+                console.log(`DEBUG: CMU Dict file has ${lines.length} lines.`); 
 
-                cmudict = {}; // Ensure cmudict is reset/cleared before populating
+                cmudict = {}; // Ensure cmudict is reset/cleared
 
-                let populatedEntries = 0; // NEW COUNTER
+                let populatedEntries = 0; 
                 lines.forEach((line, index) => {
-                    // Standard CMU dictionary uses two spaces as a delimiter
+                    // Skip empty lines or lines that are just whitespace
+                    if (line.trim() === '') return; 
+
+                    // Attempt to split by two spaces (standard CMU dict delimiter)
                     const parts = line.split('  '); 
                     
-                    if (parts.length >= 2) { 
-                        const word = parts[0].trim(); // Trim any whitespace from the word
-                        // Split the phonemes by single space and trim each one
+                    // --- NEW DETAILED DEBUG LOGS FOR FIRST FEW LINES ---
+                    if (index < 10) { // Log detailed info for the first 10 lines
+                        console.log(`DEBUG Line ${index}: Raw='${line}'`);
+                        console.log(`DEBUG Line ${index}: parts.length=${parts.length}`);
+                        if (parts.length > 0) console.log(`DEBUG Line ${index}: parts[0]='${parts[0]}'`);
+                        if (parts.length > 1) console.log(`DEBUG Line ${index}: parts[1]='${parts[1]}'`);
+                    }
+                    // --- END NEW DETAILED DEBUG LOGS ---
+
+                    if (parts.length >= 2) {
+                        const word = parts[0].trim();
+                        // Split phonemes by single space and filter out any empty strings
                         const phones = parts[1].trim().split(' ').filter(p => p); 
 
-                        if (word && phones.length > 0) { // Ensure word and phones are not empty
+                        // --- NEW DETAILED DEBUG LOGS BEFORE FINAL CHECK ---
+                        if (index < 10) {
+                            console.log(`DEBUG Line ${index}: Pre-check: Word='${word}', Phones.length=${phones.length}`);
+                        }
+                        // --- END NEW DETAILED DEBUG LOGS ---
+
+                        if (word && phones.length > 0) {
                             cmudict[word.toLowerCase()] = phones;
                             populatedEntries++;
-                            // Log a few examples at the start and every 10,000 entries
+                            // Log successfully parsed examples
                             if (populatedEntries <= 5 || populatedEntries % 10000 === 0) {
-                                console.log(`DEBUG: Parsed line ${index}: Word='${word.toLowerCase()}', Phones=[${phones.join(', ')}]`);
+                                console.log(`DEBUG: Parsed successfully: Word='${word.toLowerCase()}', Phones=[${phones.join(', ')}]`);
                             }
+                        } else {
+                            // Log if a line fails the final word/phones check
+                            if (index < 10 || populatedEntries === 0) { // Log if not yet populated, or first few
+                                console.log(`DEBUG Line ${index}: Failed final check (word empty or phones empty): Word='${word}', Phones.length=${phones.length}`);
+                            }
+                        }
+                    } else {
+                        // Log if a line didn't split into at least two parts by '  '
+                        if (index < 10) {
+                            console.log(`DEBUG Line ${index}: Failed to split by '  ': parts.length=${parts.length}`);
                         }
                     }
                 });
-                console.log(`DEBUG: cmudict populated with ${populatedEntries} entries from ${lines.length} lines.`); // NEW LOG
+                console.log(`DEBUG: cmudict populated with ${populatedEntries} entries from ${lines.length} lines.`); 
                 console.log("CMU Pronouncing Dictionary loaded.");
             } catch (error) {
                 console.error('Error loading CMU Pronouncing Dictionary:', error);
                 messageDisplay.textContent = 'Failed to load dictionary. Please try again.';
             }
         }
-
 
         // Loads a common English word list
         async function loadWordList() {
