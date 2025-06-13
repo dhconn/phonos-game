@@ -458,28 +458,28 @@ async function loadCMUDict() {
                     // Skip empty lines or lines that are just whitespace
                     if (line.trim() === '') return; 
 
-                    // Attempt to split by two spaces (standard CMU dict delimiter)
-                    const parts = line.split('  '); 
+                    // --- CRITICAL CHANGE HERE: Use regex to split by any whitespace ---
+                    const parts = line.trim().split(/\s+/); 
+                    // --- END CRITICAL CHANGE ---
                     
-                    // --- NEW DETAILED DEBUG LOGS FOR FIRST FEW LINES ---
-                    if (index < 10) { // Log detailed info for the first 10 lines
+                    // Detailed debug logs for the first 10 lines
+                    if (index < 10) { 
                         console.log(`DEBUG Line ${index}: Raw='${line}'`);
                         console.log(`DEBUG Line ${index}: parts.length=${parts.length}`);
                         if (parts.length > 0) console.log(`DEBUG Line ${index}: parts[0]='${parts[0]}'`);
                         if (parts.length > 1) console.log(`DEBUG Line ${index}: parts[1]='${parts[1]}'`);
                     }
-                    // --- END NEW DETAILED DEBUG LOGS ---
 
                     if (parts.length >= 2) {
-                        const word = parts[0].trim();
-                        // Split phonemes by single space and filter out any empty strings
-                        const phones = parts[1].trim().split(' ').filter(p => p); 
+                        const word = parts[0]; 
+                        // Join all remaining parts (which are phonemes) with a single space
+                        // then split by space to get individual phonemes.
+                        const phones = parts.slice(1).join(' ').split(' ').filter(p => p); 
 
-                        // --- NEW DETAILED DEBUG LOGS BEFORE FINAL CHECK ---
+                        // Detailed debug logs before final check
                         if (index < 10) {
                             console.log(`DEBUG Line ${index}: Pre-check: Word='${word}', Phones.length=${phones.length}`);
                         }
-                        // --- END NEW DETAILED DEBUG LOGS ---
 
                         if (word && phones.length > 0) {
                             cmudict[word.toLowerCase()] = phones;
@@ -490,14 +490,14 @@ async function loadCMUDict() {
                             }
                         } else {
                             // Log if a line fails the final word/phones check
-                            if (index < 10 || populatedEntries === 0) { // Log if not yet populated, or first few
+                            if (index < 10 || populatedEntries === 0) { 
                                 console.log(`DEBUG Line ${index}: Failed final check (word empty or phones empty): Word='${word}', Phones.length=${phones.length}`);
                             }
                         }
                     } else {
-                        // Log if a line didn't split into at least two parts by '  '
+                        // Log if a line didn't split into at least two parts by regex
                         if (index < 10) {
-                            console.log(`DEBUG Line ${index}: Failed to split by '  ': parts.length=${parts.length}`);
+                            console.log(`DEBUG Line ${index}: Failed to split into at least two parts by regex.`);
                         }
                     }
                 });
