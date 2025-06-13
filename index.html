@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phono</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>Phono</title> <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
     <style>
@@ -35,73 +34,114 @@
         h1 {
             color: #2c3e50;
             margin-bottom: 20px;
-            font-family: 'Dancing Script', cursive;
-            font-size: 3em;
+            font-family: 'Dancing Script', cursive; /* Applied Dancing Script font */
+            font-size: 2.8em;
         }
 
-        .game-info, .input-section, .buttons-section, .share-section, .top-scores-section, .rules-section, .mode-selection {
+        #gameTagline {
+            font-size: 1.2em; /* Slightly smaller than h1 */
+            color: #555; /* Slightly muted color */
+            margin-top: -10px; /* Pull it closer to the title */
+            margin-bottom: 25px; /* Add some space below it */
+            font-style: italic; /* Give it a tagline look */
+        }
+
+        .game-controls, .game-info {
             margin-bottom: 20px;
         }
 
-        .display-box {
-            background-color: #e9ecef;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: #555;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            word-wrap: break-word;
-            word-break: break-all;
-        }
-
-        #currentWordDisplay {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #007bff;
-            min-height: 60px;
-        }
-
-        #messageDisplay {
+        .mode-selection label {
+            margin: 0 10px;
             font-size: 1.1em;
-            color: #28a745;
-            min-height: 30px;
-        }
-
-        #hintDisplay {
-            font-size: 0.9em;
-            color: #6c757d;
-            min-height: 20px;
-            margin-top: 5px;
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            width: calc(100% - 22px);
-            font-size: 1em;
-            margin-bottom: 10px;
-            text-align: center;
         }
 
         button {
-            background-color: #007bff;
-            color: white;
             padding: 10px 20px;
+            margin: 5px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            margin: 5px;
             transition: background-color 0.3s ease;
         }
 
-        button:hover:enabled {
+        button#startGameButton {
+            background-color: #28a745;
+            color: white;
+        }
+
+        button#startGameButton:hover:enabled {
+            background-color: #218838;
+        }
+
+        button#resetGameButton {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        button#resetGameButton:hover:enabled {
+            background-color: #c82333;
+        }
+
+        button#submitButton {
+            background-color: #007bff;
+            color: white;
+        }
+
+        button#submitButton:hover:enabled {
             background-color: #0056b3;
+        }
+
+        button#showRulesButton {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        button#showRulesButton:hover {
+            background-color: #5a6268;
+        }
+        
+        /* Styles for Share Buttons */
+        #shareOptions button {
+            background-color: #007bff; /* A default blue */
+            color: white;
+            margin: 5px;
+        }
+        #shareOptions button#facebookShareButton { 
+            background-color: #1877F2; /* Facebook blue */
+        }
+        #shareOptions button#facebookShareButton:hover {
+            background-color: #166FE5;
+        }
+        #shareOptions button#copyShareButton {
+            background-color: #6c757d; /* Muted color for copy */
+        }
+        #shareOptions button#copyShareButton:hover {
+            background-color: #5a6268;
+        }
+        #shareOptions button#challengeFriendButton { 
+            background-color: #ff9800; /* Orange */
+        }
+        #shareOptions button#challengeFriendButton:hover {
+            background-color: #e68900;
+        }
+
+        /* New style for the hint button */
+        #hintSection button#hintButton {
+            background-color: #ffc107; /* Yellowish/orange */
+            color: #333;
+            margin-top: 15px; 
+            margin-bottom: 5px;
+        }
+
+        #hintSection button#hintButton:hover:enabled {
+            background-color: #e0a800;
+        }
+
+        #hintSection {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         button:disabled {
@@ -109,163 +149,286 @@
             cursor: not-allowed;
         }
 
-        .share-section button {
-            background-color: #6c757d;
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1.1em;
+            width: calc(100% - 130px); /* Adjust width to fit button */
+            margin-right: 10px;
+            box-sizing: border-box;
         }
 
-        .share-section button:hover:enabled {
-            background-color: #5a6268;
+        #wordDisplay h2 {
+            font-size: 2.5em;
+            color: #007bff;
+            margin: 20px 0;
+            min-height: 1.5em; /* Ensure consistent height */
         }
 
-        .top-scores-section ul {
-            list-style: none;
-            padding: 0;
+        .game-info p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .game-info span {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #e74c3c; /* Red for errors/info */
+            min-height: 1.2em; /* Ensure consistent height */
+        }
+        /* Ensure messages have consistent styling, hintDisplay might be separate from messageDisplay */
+        #hintDisplay {
             margin-top: 10px;
+            font-size: 1.1em;
+            min-height: 1.2em;
+            color: #007bff; /* Hint text will be blue */
         }
 
-        .top-scores-section li {
-            padding: 5px 0;
-            border-bottom: 1px dashed #e9ecef;
+        /* Styles for the new sections */
+        #wordsUsedSection, #topScoresSection, #rulesSection, #shareOptions {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        #rulesSection {
+            background-color: #e9f5ff; /* Light blue background */
+            border: 1px solid #cceeff; /* Blue border */
+        }
+        /* Specific styling for share options section */
+        #shareOptions {
+            background-color: #e0ffe0; /* Light green background */
+            border: 1px solid #ccffcc; /* Green border */
+            text-align: center;
         }
 
-        .top-scores-section li:last-child {
+
+        #wordsUsedSection h4, #topScoresSection h4, #rulesSection h4, #shareOptions h4 {
+            color: #444;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        #wordsUsedList, #topScoresList {
+            list-style-type: none; /* Remove default bullet/number */
+            padding: 0;
+            margin: 0;
+            font-size: 0.95em;
+            color: #555;
+            max-height: 120px; /* Limit height for scrolling */
+            overflow-y: auto; /* Enable scrolling */
+            border-top: 1px dashed #eee;
+            padding-top: 10px;
+        }
+
+        #wordsUsedList li, #topScoresList li {
+            padding: 4px 0;
+            border-bottom: 1px dotted #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #topScoresList {
+            list-style-type: decimal; /* Use decimal for numbered list */
+            padding-left: 20px; /* Indent for numbers */
+            text-align: left; /* Align list items left */
+            margin: 0 auto; /* Center the ol itself */
+            display: inline-block; /* Allow centering of the ol */
+        }
+
+        #topScoresList li:last-child {
             border-bottom: none;
         }
 
-        .words-used-list {
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            margin-top: 10px;
-        }
-
-        .words-used-list ul {
-            list-style: decimal;
+        #rulesSection ol, #rulesSection ul {
             padding-left: 20px;
-            text-align: left;
+            margin-bottom: 10px;
         }
-
-        .mode-selection label {
-            margin: 0 10px;
-            cursor: pointer;
-        }
-
-        .mode-selection input[type="radio"]:disabled + span {
-            color: #999;
-            cursor: not-allowed;
+        #rulesSection li {
+            margin-bottom: 5px;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Phono</h1>
+        <h1>Phono</h1> <p id="gameTagline">Outthink. Outlink. Outlast.</p>
 
-        <div class="mode-selection">
-            <label>
-                <input type="radio" name="gameMode" value="basic" checked> <span>Basic (2+ syllables)</span>
-            </label>
-            <label>
-                <input type="radio" name="gameMode" value="advanced" disabled> <span>Advanced (3+ syllables)</span>
-            </label>
+        <div class="game-controls">
+            <div class="mode-selection">
+                <label><input type="radio" name="gameMode" value="basic" checked disabled> Basic (30s)</label>
+                <label><input type="radio" name="gameMode" value="advanced" disabled> Advanced (15s)</label>
+            </div>
+
+            <button id="startGameButton" disabled>Start New Game</button>
+            <button id="resetGameButton" style="display: none;" disabled>Reset Game</button>
+            <button id="showRulesButton">Show Rules</button>
         </div>
 
         <div class="game-info">
-            <p>Score: <span id="scoreDisplay">0</span> | Streak: <span id="streakDisplay">0</span></p>
-            <p>High Score: <span id="highScoreDisplay">0</span> | Session Streak: <span id="highestSessionStreakDisplay">0</span></p>
-            <p>Time Left: <span id="timeLeftDisplay">30</span>s</p>
+            <p>Score: <span id="scoreDisplay">0</span></p>
+            <p>Streak: <span id="streakDisplay">0</span></p>
+            <p>Time Left: <span id="timerDisplay">--</span></p>
+            <p>High Score: <span id="highScoreDisplay">0</span></p>
+            <p>Highest Streak (Session): <span id="highestSessionStreakDisplay">0</span></p>
         </div>
 
-        <div class="display-box" id="currentWordDisplay"></div>
-        <div class="display-box" id="messageDisplay">Click 'Start New Game' to begin!</div>
-        <div id="hintDisplay"></div>
-
-        <div class="input-section">
-            <label for="wordInput" style="display: none;">Type your word here</label> <input type="text" id="wordInput" name="wordInput" placeholder="Type your word here" disabled> </div>
-
-        <div class="buttons-section">
-            <button id="startGameButton">Start New Game</button>
-            <button id="submitButton" disabled>Submit</button>
-            <button id="hintButton" disabled>Hint (Cost: 20 pts)</button>
-            <button id="resetGameButton" style="display: none;">Reset Game</button>
+        <div id="wordDisplay">
+            <h2 id="currentWordDisplay"></h2>
         </div>
 
-        <div class="words-used-list">
-            <h4>Words Used:</h4>
-            <ul id="wordsUsedList">
-                </ul>
+        <div id="inputSection">
+            <input type="text" id="wordInput" placeholder="Enter word here" disabled>
+            <button id="submitButton" disabled>Submit Word</button>
         </div>
 
-        <div class="share-section" style="display: none;">
-            <h4>Share Your Score!</h4>
-            <button id="copyShareButton">Copy Score Message</button>
-            <button id="facebookShareButton">Share on Facebook</button>
-            <button id="challengeFriendButton">Challenge a Friend</button>
+        <div id="hintSection">
+            <button id="hintButton" disabled>Get Hint (Cost: 20 pts)</button>
+            <p id="hintDisplay" class="message"></p>
         </div>
 
-        <div class="top-scores-section">
-            <h4>Top 5 Scores:</h4>
-            <ul id="topScoresList">
-                </ul>
-        </div>
+        <p id="messageDisplay" class="message"></p>
 
-        <button id="showRulesButton">Show Rules</button>
         <div id="rulesSection" style="display: none;">
-            <h4>How to Play Phono:</h4>
-            <ol>
+            <h4>How to Play Phono:</h4> <ol>
                 <li>The game starts with a word.</li>
                 <li>Your goal is to type a new word that **shares a common sound chunk** with the previous word.</li>
-                <li>**Sound Chunk Rule:** The shared sound chunk must contain at least one vowel phoneme. That means a sound with a vowel and consonant, such as the "AP" sound in "NAPKIN." A consonant alone won't cut it: For example, "BIKER" won't work as the next word after "CATNAP," even though they share the "K" (or hard C) sound.</li>
-		        <li>**Syllable Rule:** Your new word must have at least 2 syllables in Basic Mode, and at least 3 syllables in Advanced Mode.</li>
+                <li>**Sound Chunk Rule:** The shared sound chunk must contain at least one vowel phoneme. That means a sound with a vowel and consonant, such as the "AP" sound in "NAPKIN." A consonant alone won't cut it: For example, "BIKER" won't work as the next word after "CATNAP," even though they share the "K" (or hard C) sound.</li> 
+		<li>**Syllable Rule:** Your new word must have **at least 2 syllables**.</li>
                 <li>**No Repeats:** You cannot use the same word twice in one game.</li>
-                <li>You have limited time per turn! (30 seconds in all modes)</li>
-		        <li>It takes 10 successful plays to complete Level 1.</li>
+                <li>You have limited time per turn!</li>
+		<li>It takes 10 successful plays to complete Level 1.</li>
             </ol>
             <h4>Scoring:</h4>
             <ul>
                 <li>Base points for each correct word.</li>
                 <li>**Time Bonus:** Earn extra points for submitting words quickly.</li>
-                <li>**Syllable Bonus:** Get bonus points for longer words (more syllables than required).</li>
+                <li>**Syllable Bonus:** Get bonus points for longer words (more syllables).</li>
                 <li>**Hints:** Cost 20 points each.</li>
             </ul>
             <h4>Game Over:</h4>
             <ul>
                 <li>If you run out of time.</li>
                 <li>If your word does not share a valid sound with the previous word.</li>
-                <li>If your word has fewer syllables than required for the current mode.</li>
+                <li>If your word has fewer than 2 syllables.</li>
             </ul>
             <p>Good luck and happy chaining!</p>
         </div>
+
+        <div id="shareOptions" style="display: none;">
+            <h4>Share Your Achievement!</h4>
+            <button id="copyShareButton">Copy Score Message</button>
+            <button id="facebookShareButton">Share on Facebook</button>
+            <button id="challengeFriendButton">Challenge a Friend</button>
+        </div>
+
+        <div id="wordsUsedSection">
+            <h4>Words Used This Round:</h4>
+            <ul id="wordsUsedList">
+                </ul>
+        </div>
+
+        <div id="topScoresSection">
+            <h4>Top Scores:</h4>
+            <ol id="topScoresList">
+                <li>N/A</li> </ol>
+        </div>
+
     </div>
 
-	<script src="pronouncing.min.js"></script>
-
     <script>
-        // === DOM ELEMENTS ===
-        const currentWordDisplay = document.getElementById('currentWordDisplay');
-        const wordInput = document.getElementById('wordInput');
-        const submitButton = document.getElementById('submitButton');
-        const startGameButton = document.getElementById('startGameButton');
-        const resetGameButton = document.getElementById('resetGameButton');
-        const scoreDisplay = document.getElementById('scoreDisplay');
-        const streakDisplay = document.getElementById('streakDisplay');
-        const highScoreDisplay = document.getElementById('highScoreDisplay');
-        const highestSessionStreakDisplay = document.getElementById('highestSessionStreakDisplay');
-        const timeLeftDisplay = document.getElementById('timeLeftDisplay');
-        const messageDisplay = document.getElementById('messageDisplay');
-        const wordsUsedList = document.getElementById('wordsUsedList');
-        const topScoresList = document.getElementById('topScoresList');
-        const showRulesButton = document.getElementById('showRulesButton');
-        const rulesSection = document.getElementById('rulesSection');
-        const copyShareButton = document.getElementById('copyShareButton');
-        const facebookShareButton = document.getElementById('facebookShareButton');
-        const challengeFriendButton = document.getElementById('challengeFriendButton');
-        const hintButton = document.getElementById('hintButton');
-        const hintDisplay = document.getElementById('hintDisplay');
-        const shareOptions = document.querySelector('.share-section');
-        const modeRadios = document.querySelectorAll('input[name="gameMode"]');
+        // === PRONOUNCING.JS MODULE (EMBEDDED) ===
+        // This IIFE contains the dictionary logic for pronunciation and rhymes.
+        window.pronouncing = (function () {
+            var dict = {};
+            var phones = {};
+            var dictionaryLoaded = false; // Flag to track if dictionary is loaded
+
+            var mod = {
+                setDictionary: function (text) {
+                    text.split('\n').forEach(function (line) {
+                        if (!line) return;
+                        var parts = line.split(/\s+/);
+                        var word = parts[0].toLowerCase();
+                        // IMPORTANT FIX: Clean words with (n) suffixes to map to base word
+                        word = word.replace(/\(\d+\)$/, ''); // Remove (1), (2) etc. from word suffixes
+                        var phone = parts.slice(1);
+
+                        // Ensure dict[word] is an array before pushing
+                        if (!Array.isArray(dict[word])) {
+                            dict[word] = [];
+                        }
+                        dict[word].push(phone);
+
+                        phone.forEach(function (p) {
+                            if (!phones[p]) {
+                                phones[p] = [];
+                            }
+                            phones[p].push(word);
+                        });
+                    });
+                    console.log("Pronouncing.js dictionary initialized with " + Object.keys(dict).length + " words.");
+                    dictionaryLoaded = true; // Set flag after dictionary is loaded
+                },
+
+                // Returns all pronunciations (arrays of phonemes) for a given word
+                phonesForWord: function (word) {
+                    return dict[word.toLowerCase()];
+                },
+
+                // Returns a list of words that rhyme with the given word
+                // (Note: This function is not used in the final custom rule, but kept for completeness
+                // as it's part of the pronouncing.js library)
+                rhymes: function (word) {
+                    var phones = this.phonesForWord(word);
+                    if (!phones) return [];
+                    var primaryPhone = phones[0]; // Take the first pronunciation
+                    var vowelIndex = -1;
+                    for (var i = primaryPhone.length - 1; i >= 0; i--) {
+                        if (primaryPhone[i].match(/[AEIOU]/)) { // Simple check for vowel phoneme
+                            vowelIndex = i;
+                            break;
+                        }
+                    }
+                    if (vowelIndex === -1) return []; // No vowel found, no rhyme
+
+                    var rhymeSound = primaryPhone.slice(vowelIndex).join(' ');
+                    var matchingWords = [];
+                    for (var p in phones) {
+                        if (p.includes(rhymeSound)) {
+                            phones[p].forEach(function (w) {
+                                if (w !== word) { // Don't include the word itself
+                                    matchingWords.push(w);
+                                }
+                            });
+                        }
+                    }
+                    return matchingWords;
+                },
+
+                // New getter to check if the dictionary is loaded
+                isDictionaryLoaded: function() {
+                    return dictionaryLoaded;
+                },
+
+                // New getter to access the dictionary (useful for picking random words)
+                getDictionary: function() {
+                    return dict;
+                }
+            };
+            return mod;
+        })();
 
         // === GLOBAL GAME STATE VARIABLES ===
         let currentScore = 0;
@@ -274,7 +437,7 @@
         let highestSessionStreak = 0; // To track highest streak in the current browser session
         let usedWords = []; // To store words already used in the current round
         let gameMode = 'basic'; // Default mode
-        let maxTimePerTurn = 30; // Basic mode default (now also for Advanced)
+        let maxTimePerTurn = 30; // Basic mode default
         let timeLeft = maxTimePerTurn;
         let timerInterval = null; // To hold the setInterval ID
         let gameActive = false; // To track if a game is currently running
@@ -282,21 +445,66 @@
 
         // --- NEW: Level 1 Target Streak ---
         const LEVEL1_TARGET_STREAK = 10;
-        // --- NEW: Syllable requirements per level ---
-        const MIN_SYLLABLES_BASIC = 2;
-        const MIN_SYLLABLES_ADVANCED = 3;
 
-        // === PRONOUNCING DICTIONARY AND WORD LIST ===
-        let cmudict = {};
-        const WORD_LIST_URL = 'https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt';
-        let wordList = new Set();
-        let commonWords = new Set(); // For hint generation, can be a subset of wordList
+        // === DOM ELEMENTS ===
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const streakDisplay = document.getElementById('streakDisplay');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const highScoreDisplay = document.getElementById('highScoreDisplay'); // Will show the #1 score from topScores
+        const highestSessionStreakDisplay = document.getElementById('highestSessionStreakDisplay');
+        const wordsUsedList = document.getElementById('wordsUsedList');     // For used words this round
+        const topScoresList = document.getElementById('topScoresList');    // For the persistent top scores list
+        const startGameButton = document.getElementById('startGameButton');
+        const resetGameButton = document.getElementById('resetGameButton');
+        const modeRadios = document.querySelectorAll('input[name="gameMode"]');
+        const currentWordDisplay = document.getElementById('currentWordDisplay');
+        const wordInput = document.getElementById('wordInput');
+        const submitButton = document.getElementById('submitButton');
+        const messageDisplay = document.getElementById('messageDisplay');
+        const showRulesButton = document.getElementById('showRulesButton');
+        const rulesSection = document.getElementById('rulesSection');
+        const shareOptions = document.getElementById('shareOptions');
+        const copyShareButton = document.getElementById('copyShareButton');
+        const facebookShareButton = document.getElementById('facebookShareButton');
+        const challengeFriendButton = document.getElementById('challengeFriendButton');
+        const hintButton = document.getElementById('hintButton'); 
+        const hintDisplay = document.getElementById('hintDisplay'); 
 
-        // === UTILITY FUNCTIONS ===
 
-        // Helper to check if a phoneme is a vowel (based on CMU Pronouncing Dictionary standards)
+        // === HELPER FUNCTIONS ===
+
+        // Cleans phoneme stress markers (e.g., "AH0" -> "AH", "OW1" -> "OW")
+        function cleanPhoneme(phoneme) {
+            return phoneme.replace(/[012]/g, '');
+        }
+
+        // Determines if a cleaned phoneme (without stress marker) is a vowel sound.
+        // Based on CMU Pronouncing Dictionary phoneme set.
         function isVowelPhoneme(phoneme) {
-            return phoneme.match(/[AEIOU]1?0?2?$/); // Matches ARPA vowel symbols (e.g., AA, AE, IH, OY, UW)
+            const cleaned = cleanPhoneme(phoneme);
+            // List of CMU vowel phonemes (without stress markers)
+            const vowels = new Set(['AA', 'AE', 'AH', 'AO', 'AW', 'AY', 'EH', 'ER', 'EY', 'IH', 'IY', 'OW', 'OY', 'UH', 'UW']);
+            return vowels.has(cleaned);
+        }
+
+        // Define a mapping for "similar" vowel phonemes for comparison purposes
+        // This helps the game recognize intuitive sound connections that CMUdict might differentiate.
+        const PHONEME_EQUIVALENCE_GROUP = {
+            'AE': 'GROUP_A_LIKE', // as in 'cat'
+            'AH': 'GROUP_A_LIKE', // as in 'cup', 'but'
+            'AA': 'GROUP_A_LIKE', // as in 'father', 'hot'
+            // 'AO': 'GROUP_O_LIKE', // 'all', 'caught' - can be grouped if needed, or kept distinct
+            // 'OW': 'GROUP_O_LIKE', // 'go', 'boat'
+
+            // Add other common "fudged" pairs if necessary in future
+            // 'EH': 'GROUP_E_LIKE', // 'bed'
+            // 'IH': 'GROUP_E_LIKE', // 'bid'
+        };
+
+        // Function to get a "normalized" phoneme for comparison, using the equivalence groups
+        function getNormalizedPhoneme(phoneme) {
+            const cleaned = cleanPhoneme(phoneme);
+            return PHONEME_EQUIVALENCE_GROUP[cleaned] || cleaned; // Return grouped value if exists, else cleaned original
         }
 
         // Basic syllable counting function (can be simple, may not be 100% accurate for all words)
@@ -315,277 +523,159 @@
             return Math.max(1, count);
         }
 
-        // Checks if two words share a valid sound chunk
-        function transferSound(prevWord, newWord, isHintCheck = false) {
-            const prevPhones = pronouncing.phonesForWord(prevWord.toLowerCase());
-            const newPhones = pronouncing.phonesForWord(newWord.toLowerCase());
-
-            if (!prevPhones || prevPhones.length === 0 || !newPhones || newPhones.length === 0) {
-                if (!isHintCheck) messageDisplay.textContent = `"${newWord}" or "${prevWord}" not found in dictionary.`;
-                return null;
-            }
-
-            // Define equivalence groups for similar-sounding vowel phonemes
-            const PHONEME_EQUIVALENCE_GROUP = {
-                // Short A
-                'AE': ['AE'], // as in "cat"
-                // Long A
-                'EY': ['EY'], // as in "day"
-                // Short E
-                'EH': ['EH'], // as in "bed"
-                // Long E
-                'IY': ['IY'], // as in "see"
-                // Short I
-                'IH': ['IH'], // as in "sit"
-                // Long I (diphthong)
-                'AY': ['AY'], // as in "my"
-                // Short O
-                'AA': ['AA', 'AO'], // as in "pot", "bought"
-                'AO': ['AA', 'AO'],
-                // Long O (diphthong)
-                'OW': ['OW'], // as in "go"
-                // Short U
-                'AH': ['AH', 'AX'], // as in "cup", "about" (schwa)
-                'AX': ['AH', 'AX'],
-                'UW': ['UW', 'UH'], // as in "blue", "pull" (can be similar)
-                'UH': ['UW', 'UH'],
-                // Other diphthongs
-                'OY': ['OY'], // as in "boy"
-                'AW': ['AW'], // as in "cow"
-                'ER': ['ER', 'R'], // as in "bird", "butter" (approximant R can be vocalic)
-                'R': ['ER', 'R']
-            };
-
-            // Helper to get equivalent phonemes (strips stress markers)
-            const getEquivPhonemes = (p) => {
-                const basePhoneme = p.replace(/[0-2]/g, ''); // Remove stress markers
-                return PHONEME_EQUIVALENCE_GROUP[basePhoneme] || [basePhoneme];
-            };
-
-            const prevPhonesFlat = prevPhones[0].split(' ').map(p => p.toUpperCase());
-            const newPhonesFlat = newPhones[0].split(' ').map(p => p.toUpperCase());
-
-            // Check if word has been used already
-            if (usedWords.includes(newWord.toLowerCase()) && !isHintCheck) {
-                messageDisplay.textContent = `"${newWord}" has already been used!`;
-                return null;
-            }
-
-            let newWordSyllables;
-            let requiredSyllables = gameMode === 'basic' ? MIN_SYLLABLES_BASIC : MIN_SYLLABLES_ADVANCED;
-
-            try {
-                newWordSyllables = syllable(newWord);
-                if (!isHintCheck) console.log(`Syllables for new word "${newWord}": ${newWordSyllables}. Required: ${requiredSyllables}`);
-                if (newWordSyllables < requiredSyllables) {
-                    if (!isHintCheck) {
-                        console.log(`Rule failed: "${newWord}" has ${newWordSyllables} syllables, requires ${requiredSyllables} or more.`);
-                        messageDisplay.textContent = `"${newWord}" must have at least ${requiredSyllables} syllables.`;
-                    }
-                    return null;
-                }
-            } catch (e) {
-                if (!isHintCheck) {
-                    console.error("Error calculating syllables for new word:", e);
-                    messageDisplay.textContent = `Error checking syllables for "${newWord}".`;
-                }
-                return null;
-            }
-
-            // Find common sound chunk (at least one vowel phoneme)
-            for (let i = 0; i < prevPhonesFlat.length; i++) {
-                for (let j = 0; j < newPhonesFlat.length; j++) {
-                    // Check for single phoneme match (considering equivalences)
-                    const prevEquivs = getEquivPhonemes(prevPhonesFlat[i]);
-                    const newEquivs = getEquivPhonemes(newPhonesFlat[j]);
-
-                    if (prevEquivs.some(p => newEquivs.includes(p))) {
-                        if (isVowelPhoneme(prevPhonesFlat[i]) || isVowelPhoneme(newPhonesFlat[j])) {
-                            // If a common vowel phoneme is found, or if it's part of a chunk containing a vowel
-                            // This is a simplification; a true "sound chunk" would involve sequence matching.
-                            // For now, any common vowel phoneme counts.
-                            return prevPhonesFlat[i].replace(/[0-2]/g, ''); // Return base phoneme as chunk
-                        }
-                    }
-
-                    // Check for multi-phoneme common chunks
-                    for (let k = 1; i + k <= prevPhonesFlat.length && j + k <= newPhonesFlat.length; k++) {
-                        const prevChunk = prevPhonesFlat.slice(i, i + k);
-                        const newChunk = newPhonesFlat.slice(j, j + k);
-
-                        // Check if chunks are equivalent
-                        let chunksMatch = true;
-                        let containsVowel = false;
-                        for (let l = 0; l < k; l++) {
-                            const pEquivs = getEquivPhonemes(prevChunk[l]);
-                            const nEquivs = getEquivPhonemes(newChunk[l]);
-                            if (!pEquivs.some(p => nEquivs.includes(p))) {
-                                chunksMatch = false;
-                                break;
-                            }
-                            if (isVowelPhoneme(prevChunk[l]) || isVowelPhoneme(newChunk[l])) {
-                                containsVowel = true;
-                            }
-                        }
-
-                        if (chunksMatch && containsVowel) {
-                            return prevChunk.map(p => p.replace(/[0-2]/g, '')).join('-');
-                        }
-                    }
-                }
-            }
-            if (!isHintCheck) messageDisplay.textContent = `"${newWord}" does not share a valid sound with "${prevWord}".`;
-            return null; // No common sound chunk found
+        // Helper function to get a random element from an array
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        // Loads the CMU Pronouncing Dictionary
 
-async function loadCMUDict() {
+        // === DICTIONARY LOADING ===
+        async function loadPronouncingDictionary() {
+            const dictPath = 'cmudict.dict';
+            const remoteFallbackURL = 'https://raw.githubusercontent.com/cmusphinx/cmudict/master/cmudict.dict'; 
+
+            let dictionaryText = '';
+            messageDisplay.textContent = "Loading dictionary...";
+
             try {
-                const response = await fetch('cmu.dict');
-                console.log('CMUDict fetch response:', response.ok, response.status);
+                console.log("Attempting to load dictionary from relative path:", dictPath);
+                const response = await fetch(dictPath);
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status} from ${dictPath}`);
                 }
-                const text = await response.text();
-                const lines = text.split('\n');
-                console.log(`DEBUG: CMU Dict file has ${lines.length} lines.`); 
+                dictionaryText = await response.text();
+                console.log("Loaded dictionary text from relative path.");
+            } catch (error) {
+                console.warn("Failed to load dictionary from relative path. Falling back to remote URL:", error);
+                messageDisplay.textContent = "Failed to load local dictionary, trying remote...";
 
-                cmudict = {}; // Ensure cmudict is reset/cleared
-
-                let populatedEntries = 0; 
-                lines.forEach((line, index) => {
-                    // Skip empty lines or lines that are just whitespace
-                    if (line.trim() === '') return; 
-
-                    // --- CRITICAL CHANGE HERE: Use regex to split by any whitespace ---
-                    const parts = line.trim().split(/\s+/); 
-                    // --- END CRITICAL CHANGE ---
-                    
-                    // Detailed debug logs for the first 10 lines
-                    if (index < 10) { 
-                        console.log(`DEBUG Line ${index}: Raw='${line}'`);
-                        console.log(`DEBUG Line ${index}: parts.length=${parts.length}`);
-                        if (parts.length > 0) console.log(`DEBUG Line ${index}: parts[0]='${parts[0]}'`);
-                        if (parts.length > 1) console.log(`DEBUG Line ${index}: parts[1]='${parts[1]}'`);
+                try {
+                    const response = await fetch(remoteFallbackURL);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status} from ${remoteFallbackURL}`);
                     }
+                    dictionaryText = await response.text();
+                    console.log("Fetched dictionary text from remote URL.");
+                } catch (remoteError) {
+                    console.error("Failed to load dictionary from any source:", remoteError);
+                    messageDisplay.textContent = `Failed to load dictionary: ${remoteError.message}`;
+                    throw remoteError;
+                }
+            }
 
-                    if (parts.length >= 2) {
-                        const word = parts[0]; 
-                        // Join all remaining parts (which are phonemes) with a single space
-                        // then split by space to get individual phonemes.
-                        const phones = parts.slice(1).join(' ').split(' ').filter(p => p); 
+            if (dictionaryText) {
+                pronouncing.setDictionary(dictionaryText);
+            } else {
+                throw new Error("Dictionary text is empty after loading attempts.");
+            }
+        }
 
-                        // Detailed debug logs before final check
-                        if (index < 10) {
-                            console.log(`DEBUG Line ${index}: Pre-check: Word='${word}', Phones.length=${phones.length}`);
-                        }
-
-                        if (word && phones.length > 0) {
-                            cmudict[word.toLowerCase()] = phones;
-                            populatedEntries++;
-                            // Log successfully parsed examples
-                            if (populatedEntries <= 5 || populatedEntries % 10000 === 0) {
-                                console.log(`DEBUG: Parsed successfully: Word='${word.toLowerCase()}', Phones=[${phones.join(', ')}]`);
-                            }
-                        } else {
-                            // Log if a line fails the final word/phones check
-                            if (index < 10 || populatedEntries === 0) { 
-                                console.log(`DEBUG Line ${index}: Failed final check (word empty or phones empty): Word='${word}', Phones.length=${phones.length}`);
-                            }
-                        }
+        // === INITIALIZATION FUNCTION ===
+        async function initGame() {
+            messageDisplay.textContent = "Loading dictionary...";
+            try {
+                await loadPronouncingDictionary();
+                messageDisplay.textContent = "Dictionary loaded. Ready to play!";
+                startGameButton.disabled = false;
+                // Only enable 'basic' mode by default, 'advanced' will be unlocked
+                modeRadios.forEach(radio => {
+                    if (radio.value === 'basic') {
+                        radio.disabled = false;
                     } else {
-                        // Log if a line didn't split into at least two parts by regex
-                        if (index < 10) {
-                            console.log(`DEBUG Line ${index}: Failed to split into at least two parts by regex.`);
-                        }
+                        radio.disabled = true; // Keep advanced disabled initially
                     }
                 });
-                console.log(`DEBUG: cmudict populated with ${populatedEntries} entries from ${lines.length} lines.`); 
-                console.log("CMU Pronouncing Dictionary loaded.");
-            } catch (error) {
-                console.error('Error loading CMU Pronouncing Dictionary:', error);
-                messageDisplay.textContent = 'Failed to load dictionary. Please try again.';
-            }
-        }
 
-        // Loads a common English word list
-        async function loadWordList() {
-            try {
-                const response = await fetch(WORD_LIST_URL);
-                console.log('WordList fetch response:', response.ok, response.status); // NEW LOG
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+
+                const storedTopScores = localStorage.getItem('phonoTopScores'); // Changed key to phonoTopScores
+                if (storedTopScores) {
+                    topScores = JSON.parse(storedTopScores);
+                } else {
+                    topScores = [];
                 }
-                const text = await response.text();
-                const words = text.split('\n').map(word => word.trim().toLowerCase()).filter(word => word.length > 1);
-                wordList = new Set(words);
-                console.log(`Word list loaded with ${wordList.size} words.`);
+                
+                updateDisplay();
+                updateTopScoresDisplay();
 
-                // Create a subset of common words for hints (e.g., filter by length or known commonality)
-                commonWords = new Set([...wordList].filter(word => pronouncing.phonesForWord(word) && word.length >= 3 && word.length <= 10)); // Filter for hint quality
-                console.log(`Common words for hints: ${commonWords.size} words.`);
+                const urlParams = new URLSearchParams(window.location.search);
+                const challengeWord = urlParams.get('challengeWord');
+                if (challengeWord && pronouncing.phonesForWord(challengeWord) && syllable(challengeWord) >= 2) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    startGame(challengeWord);
+                    messageDisplay.textContent = `You've been challenged! Continue the chain from "${challengeWord.toUpperCase()}"!`;
+                }
+
+
             } catch (error) {
-                console.error('Error loading word list:', error);
-                messageDisplay.textContent = 'Failed to load word list. Hint feature may not work.';
+                console.error("Game Initialization Error:", error);
+                messageDisplay.textContent = `Failed to initialize game: ${error.message}`;
             }
         }
+
 
         // === GAME CONTROL FUNCTIONS ===
 
-        function setGameMode(mode) {
-            gameMode = mode;
-            // Time per turn remains 30s for both modes
-            maxTimePerTurn = 30; // Both basic and advanced are 30s now
-            timeLeft = maxTimePerTurn;
-            updateDisplay();
-            console.log(`Game mode set to ${gameMode}, time per turn: ${maxTimePerTurn}s. Min syllables: ${gameMode === 'basic' ? MIN_SYLLABLES_BASIC : MIN_SYLLABLES_ADVANCED}`);
+        function updateDisplay() {
+            scoreDisplay.textContent = currentScore;
+            streakDisplay.textContent = currentStreak;
+            timerDisplay.textContent = timeLeft;
+            highScoreDisplay.textContent = topScores.length > 0 ? topScores[0] : 0; 
+            highestSessionStreakDisplay.textContent = highestSessionStreak;
         }
 
-        function startGame(initialWord = null) {
-            if (!Object.keys(cmudict).length || wordList.size === 0) {
-                messageDisplay.textContent = 'Loading dictionary and word list... please wait.';
-                return; // It returns here if dictionaries are not loaded.
+        function updateWordsUsedDisplay() {
+            wordsUsedList.innerHTML = '';
+            if (usedWords.length === 0) {
+                return;
+            }
+            usedWords.forEach(word => {
+                const li = document.createElement('li');
+                li.textContent = word.toUpperCase();
+                wordsUsedList.appendChild(li);
+            });
+            wordsUsedList.scrollTop = wordsUsedList.scrollHeight;
+        }
+
+        function updateTopScoresDisplay() {
+            topScoresList.innerHTML = '';
+            if (topScores.length === 0) {
+                topScoresList.innerHTML = '<li>N/A</li>';
+                highScoreDisplay.textContent = 0;
+                return;
             }
 
-            currentScore = 0;
-            currentStreak = 0;
-            usedWords = [];
-            gameActive = true;
-            wordInput.disabled = false;
-            submitButton.disabled = false;
-            hintButton.disabled = false;
-            wordInput.value = '';
-            messageDisplay.textContent = '';
-            hintDisplay.textContent = '';
-            updateWordsUsedDisplay(); // Clear previous words
-            resetGameButton.style.display = 'inline-block';
-            startGameButton.style.display = 'none';
-            shareOptions.style.display = 'none';
+            highScoreDisplay.textContent = topScores[0]; 
 
-            let startingWord;
-            if (initialWord && pronouncing.phonesForWord(initialWord.toLowerCase()) && syllable(initialWord) >= (gameMode === 'basic' ? MIN_SYLLABLES_BASIC : MIN_SYLLABLES_ADVANCED)) {
-                startingWord = initialWord.toLowerCase();
-            } else {
-                // Pick a random word from the commonWords list that meets syllable criteria
-                const validStartWords = Array.from(commonWords).filter(word => 
-                    syllable(word) >= (gameMode === 'basic' ? MIN_SYLLABLES_BASIC : MIN_SYLLABLES_ADVANCED)
-                );
-                if (validStartWords.length === 0) {
-                    messageDisplay.textContent = "Could not find a valid starting word for this mode. Try again.";
-                    endGame("No valid starting word.");
-                    return;
-                }
-                startingWord = validStartWords[Math.floor(Math.random() * validStartWords.length)];
-            }
-            
-            currentWord = startingWord;
-            currentWordDisplay.textContent = currentWord.toUpperCase();
-            usedWords.push(currentWord);
+            topScores.forEach((score, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${score} points`;
+                topScoresList.appendChild(li);
+            });
+        }
 
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            timeLeft = maxTimePerTurn;
             updateDisplay();
-            startTimer();
-            wordInput.focus();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    endGame("Time's up! Game over. Your streak ended.");
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
         }
 
         function endGame(message) {
@@ -593,73 +683,53 @@ async function loadCMUDict() {
             stopTimer();
             wordInput.disabled = true;
             submitButton.disabled = true;
-            hintButton.disabled = true;
-            hintDisplay.textContent = "";
+            hintButton.disabled = true; 
+            hintDisplay.textContent = ""; 
             resetGameButton.disabled = true; // Ensure disabled at game end
-            currentWordDisplay.textContent = "GAME OVER!"; // Default message
-
-            // Check if game ended due to Level 1 completion
-            if (message === "LEVEL_COMPLETE") {
-                currentWordDisplay.textContent = "LEVEL 1 MASTERED!";
-                messageDisplay.textContent = "Congratulations! You completed Level 1 (Basic Mode)!";
-                messageDisplay.textContent += ` Your score and streak carry over to Level 2 (Advanced Mode)! Now, words must have at least ${MIN_SYLLABLES_ADVANCED} syllables.`;
-                
-                // Ensure Advanced mode is enabled and selected for the next game
-                modeRadios.forEach(radio => {
-                    if (radio.value === 'advanced') {
-                        radio.disabled = false; // Enable Advanced mode radio button
-                        radio.checked = true; // Select Advanced mode
-                        setGameMode('advanced'); // Apply advanced mode settings immediately
-                    } else if (radio.value === 'basic') {
-                        radio.disabled = true; // Keep Basic mode disabled for now
-                    }
-                });
-
-                // Do NOT reset currentScore or currentStreak here. They carry over!
-
-            } else {
-                // Original game over logic for losses
-                if (currentStreak > highestSessionStreak) {
-                    highestSessionStreak = currentStreak;
-                }
-
-                if (currentScore > 0) {
-                    topScores.push(currentScore);
-                    topScores.sort((a, b) => b - a);
-                    topScores = topScores.slice(0, 5);
-                    localStorage.setItem('phonoTopScores', JSON.stringify(topScores));
-                }
-
-                scoreDisplay.textContent = currentScore;
-                streakDisplay.textContent = currentStreak;
-                messageDisplay.textContent = message;
-                if (currentScore > 0 && topScores.length > 0 && currentScore === topScores[0]) {
-                     messageDisplay.textContent += ` NEW OVERALL HIGH SCORE: ${topScores[0]}!`;
-                }
-            }
+            currentWordDisplay.textContent = "GAME OVER!";
             
+            if (currentStreak > highestSessionStreak) {
+                highestSessionStreak = currentStreak;
+            }
+
+            if (currentScore > 0) {
+                topScores.push(currentScore);
+                topScores.sort((a, b) => b - a);
+                topScores = topScores.slice(0, 5);
+                localStorage.setItem('phonoTopScores', JSON.stringify(topScores)); 
+            }
+
+            scoreDisplay.textContent = currentScore;
+            streakDisplay.textContent = currentStreak;
+            messageDisplay.textContent = message;
+            if (currentScore > 0 && topScores.length > 0 && currentScore === topScores[0]) {
+                 messageDisplay.textContent += ` NEW OVERALL HIGH SCORE: ${topScores[0]}!`;
+            }
+
             updateDisplay();
             updateTopScoresDisplay();
 
             startGameButton.style.display = 'inline-block';
-            resetGameButton.style.display = 'none';
-
-            // Re-enable game start button states for the *next* round.
+            resetGameButton.style.display = 'none'; 
+            // Re-enable only 'basic' mode for next game, advanced stays disabled unless unlocked
             modeRadios.forEach(radio => {
-                if (radio.value === 'basic' && message !== "LEVEL_COMPLETE") {
+                if (radio.value === 'basic') {
                     radio.disabled = false;
                 } else if (radio.value === 'advanced') {
-                    if (currentStreak >= LEVEL1_TARGET_STREAK && gameMode === 'basic') { 
-                        radio.disabled = false;
-                    } else if (message !== "LEVEL_COMPLETE") { 
-                        radio.disabled = true;
-                    }
+                    // Only disable advanced if it was unlocked in a previous basic game
+                    // This retains its unlocked status for future games
+                    // But for starting a new game, it should be disabled if not previously unlocked.
+                    // This logic is tricky. Let's simplify:
+                    // If Level 1 was completed, leave Advanced enabled. Otherwise, disable.
+                    // The simplest is to always reset advanced to disabled.
+                    // If a player wants to select it, they should have completed Level 1 already.
+                    radio.disabled = true; 
                 }
             });
 
+
             shareOptions.style.display = 'block';
         }
-
 
         function resetGame() {
             stopTimer();
@@ -676,100 +746,227 @@ async function loadCMUDict() {
             wordInput.value = '';
             wordInput.disabled = true;
             submitButton.disabled = true;
-            hintButton.disabled = true;
-            hintDisplay.textContent = "";
-            resetGameButton.disabled = true;
+            hintButton.disabled = true; 
+            hintDisplay.textContent = ""; 
+            resetGameButton.disabled = true; // Ensure disabled after reset
 
             startGameButton.style.display = 'inline-block';
-            resetGameButton.style.display = 'none';
-            // Reset mode radios state: only basic enabled (unless advanced was unlocked globally)
+            resetGameButton.style.display = 'none'; 
+            // Reset mode radios state: only basic enabled
             modeRadios.forEach(radio => {
                 if (radio.value === 'basic') {
                     radio.disabled = false;
                 } else {
-                    // Check if advanced mode was unlocked permanently (e.g., via localStorage)
-                    // For now, it's session-based unlock
-                    const advancedUnlocked = localStorage.getItem('phonoAdvancedUnlocked') === 'true';
-                    if (advancedUnlocked) {
-                        radio.disabled = false;
-                    } else {
-                        radio.disabled = true;
-                    }
+                    radio.disabled = true; 
                 }
             });
 
             shareOptions.style.display = 'none';
         }
 
-        function startTimer() {
-            clearInterval(timerInterval);
+        function setGameMode(mode) {
+            gameMode = mode;
+            if (gameMode === 'basic') {
+                maxTimePerTurn = 30;
+            } else { // 'advanced' mode
+                maxTimePerTurn = 15;
+            }
             timeLeft = maxTimePerTurn;
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                timeLeftDisplay.textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    endGame("Time's up!");
+            updateDisplay();
+            console.log(`Game mode set to ${gameMode}, time per turn: ${maxTimePerTurn}s`);
+        }
+
+        function startGame(startWord = null) {
+            if (!pronouncing.isDictionaryLoaded()) {
+                 messageDisplay.textContent = "Dictionary not loaded yet. Please wait.";
+                 return;
+            }
+
+            resetGame(); // Reset any existing game state
+            gameActive = true;
+
+            // Disable all mode radios once game starts
+            modeRadios.forEach(radio => radio.disabled = true);
+            startGameButton.style.display = 'none';
+            resetGameButton.style.display = 'inline-block';
+            resetGameButton.disabled = false; // Enable the Reset Game button
+
+            wordInput.disabled = false;
+            submitButton.disabled = false;
+            hintButton.disabled = false; 
+            hintDisplay.textContent = ""; 
+            wordInput.focus();
+
+            if (startWord && pronouncing.phonesForWord(startWord) && syllable(startWord) >= 2) {
+                currentWord = startWord;
+            } else {
+                const dictionaryWords = Object.keys(pronouncing.getDictionary());
+                if (dictionaryWords.length === 0) {
+                    messageDisplay.textContent = "Error: Dictionary is empty or failed to load.";
+                    endGame("Failed to find starting word.");
+                    return;
                 }
-            }, 1000);
+
+                let foundStartWord = false;
+                let attempts = 0;
+                const maxAttempts = 100; 
+
+                while (!foundStartWord && attempts < maxAttempts) {
+                    const potentialWord = dictionaryWords[Math.floor(Math.random() * dictionaryWords.length)];
+                    try {
+                        if (syllable(potentialWord) >= 2) {
+                            currentWord = potentialWord;
+                            foundStartWord = true;
+                        }
+                    } catch (e) {
+                        console.error("Error checking syllables for potential start word:", potentialWord, e);
+                    }
+                    attempts++;
+                }
+
+                if (!foundStartWord) {
+                    messageDisplay.textContent = "Could not find a suitable random starting word (at least 2 syllables). Try reloading.";
+                    endGame("Failed to find starting word.");
+                    return;
+                }
+            }
+
+            usedWords.push(currentWord);
+            updateWordsUsedDisplay();
+            currentWordDisplay.textContent = currentWord.toUpperCase();
+            messageDisplay.textContent = "";
+            startTimer();
         }
 
-        function stopTimer() {
-            clearInterval(timerInterval);
+        // === MAIN GAME LOGIC (transferSound) ===
+        // isHintCheck: Set to true if this call is for a hint, to suppress console logs
+        function transferSound(prevWord, newWord, isHintCheck = false) { 
+            if (!isHintCheck) { // Only log if it's not a hint check
+                console.log(`--- Custom Phono Rule: prevWord=${prevWord}, newWord=${newWord} ---`);
+            }
+
+            const prevPhonesArr = pronouncing.phonesForWord(prevWord);
+            const newPhonesArr = pronouncing.phonesForWord(newWord);
+
+            if (!prevPhonesArr || prevPhonesArr.length === 0) {
+                if (!isHintCheck) console.warn(`No phonemes found for previous word: ${prevWord}`);
+                return null;
+            }
+            if (!newPhonesArr || newPhonesArr.length === 0) {
+                if (!isHintCheck) console.warn(`No phonemes found for new word: ${newWord}`);
+                return null;
+            }
+
+            const prevPhones = prevPhonesArr[0].map(cleanPhoneme);
+            const newPhones = newPhonesArr[0].map(cleanPhoneme);
+
+            if (!isHintCheck) {
+                console.log(`Cleaned Prev Phones (${prevWord}):`, prevPhones);
+                console.log(`Cleaned New Phones (${newWord}):`, newPhones);
+            }
+
+            let newWordSyllables;
+            try {
+                newWordSyllables = syllable(newWord);
+                if (!isHintCheck) console.log(`Syllables for new word "${newWord}": ${newWordSyllables}`);
+                if (newWordSyllables < 2) {
+                    if (!isHintCheck) {
+                        console.log(`Rule 3 failed: "${newWord}" has ${newWordSyllables} syllables, requires 2 or more.`);
+                        messageDisplay.textContent = `"${newWord}" must have at least 2 syllables.`;
+                    }
+                    return null;
+                }
+            } catch (e) {
+                if (!isHintCheck) {
+                    console.error("Error calculating syllables for new word:", e);
+                    messageDisplay.textContent = `Error checking syllables for "${newWord}".`;
+                }
+                return null;
+            }
+
+            let commonChunkFound = false;
+            let foundChunkText = '';
+
+            // Iterate through all possible chunks from prevPhones
+            for (let i = 0; i < prevPhones.length; i++) {
+                for (let j = i; j < prevPhones.length; j++) {
+                    const currentChunk = prevPhones.slice(i, j + 1);
+
+                    if (currentChunk.length === 0) continue;
+
+                    // Ensure the current chunk (from prevWord) contains at least one vowel
+                    const containsVowel = currentChunk.some(p => isVowelPhoneme(p));
+                    if (!containsVowel) {
+                        continue;
+                    }
+
+                    // --- NEW LOGIC FOR FLEXIBLE MATCH ---
+                    // Try to find this currentChunk (flexibly) within newPhones
+                    
+                    // Iterate through newPhones to find a sequence that flexibly matches currentChunk
+                    for (let k = 0; k <= newPhones.length - currentChunk.length; k++) {
+                        let match = true;
+                        // Compare the normalized versions of phonemes
+                        for (let l = 0; l < currentChunk.length; l++) {
+                            // If normalized phonemes don't match, this chunk is not a flexible match
+                            if (getNormalizedPhoneme(currentChunk[l]) !== getNormalizedPhoneme(newPhones[k + l])) {
+                                match = false;
+                                break;
+                            }
+                        }
+                        
+                        if (match) {
+                            commonChunkFound = true;
+                            // The `foundChunkText` should represent the actual phonemes from `newWord` that matched
+                            foundChunkText = newPhones.slice(k, k + currentChunk.length).join(' ');
+                            break; // Found a match, exit inner loop (looking for chunks in newPhones)
+                        }
+                    }
+                    // --- END NEW LOGIC ---
+
+                    if (commonChunkFound) break; // Found a valid chunk from prevPhones, exit inner loop (iterating prevPhones chunks)
+                }
+                if (commonChunkFound) break; // Found a valid chunk, exit outer loop (iterating prevPhones start positions)
+            }
+
+            if (commonChunkFound) {
+                return foundChunkText;
+            } else {
+                if (!isHintCheck) console.log("No common qualifying chunk found between", prevWord, "and", newWord);
+                if (isHintCheck) console.log(`Hint check: No common chunk found for "${newWord}" against "${prevWord}"`); 
+                return null;
+            }
         }
 
-        // === DISPLAY UPDATE FUNCTIONS ===
-        function updateDisplay() {
-            scoreDisplay.textContent = currentScore;
-            streakDisplay.textContent = currentStreak;
-            timeLeftDisplay.textContent = timeLeft;
-            highScoreDisplay.textContent = localStorage.getItem('phonoHighScore') || 0;
-            highestSessionStreakDisplay.textContent = highestSessionStreak; // Always show current session high
-        }
-
-        function updateWordsUsedDisplay() {
-            wordsUsedList.innerHTML = '';
-            usedWords.forEach((word, index) => {
-                const li = document.createElement('li');
-                li.textContent = word;
-                wordsUsedList.appendChild(li);
-            });
-            wordsUsedList.scrollTop = wordsUsedList.scrollHeight; // Scroll to bottom
-        }
-
-        function updateTopScoresDisplay() {
-            topScoresList.innerHTML = '';
-            topScores.forEach((score, index) => {
-                const li = document.createElement('li');
-                li.textContent = `${index + 1}. ${score}`;
-                topScoresList.appendChild(li);
-            });
-        }
-
-        // === GAME LOGIC FUNCTIONS ===
-
+        // === HANDLE WORD SUBMISSION ===
         async function handleSubmit() {
             if (!gameActive) return;
 
             const newWord = wordInput.value.trim().toLowerCase();
-            wordInput.value = ''; // Clear input field
+            wordInput.value = '';
+            hintDisplay.textContent = ""; // Clear hint display on new submission
 
-            if (newWord === '') {
+            if (!newWord) {
                 messageDisplay.textContent = "Please enter a word.";
+                startTimer();
                 return;
             }
-            if (!wordList.has(newWord)) {
-                messageDisplay.textContent = `"${newWord}" is not in our dictionary.`;
-                return;
-            }
+
             if (usedWords.includes(newWord)) {
-                messageDisplay.textContent = `"${newWord}" has already been used!`;
+                messageDisplay.textContent = `"${newWord}" has already been used this round. Try another word.`;
+                startTimer();
+                return;
+            }
+
+            if (!pronouncing.phonesForWord(newWord)) {
+                messageDisplay.textContent = `"${newWord}" is not found in the dictionary. Try another word.`;
                 return;
             }
 
             stopTimer();
 
-            const commonChunk = transferSound(currentWord, newWord);
+            // Call transferSound without the isHintCheck parameter (it defaults to false)
+            const commonChunk = transferSound(currentWord, newWord); 
             if (commonChunk) {
                 currentStreak++;
                 usedWords.push(newWord);
@@ -780,21 +977,27 @@ async function loadCMUDict() {
                 let syllableBonus = 0;
 
                 const newWordSyllables = syllable(newWord);
-                let requiredSyllables = gameMode === 'basic' ? MIN_SYLLABLES_BASIC : MIN_SYLLABLES_ADVANCED;
-
-                // Syllable bonus logic should be relative to the *required* syllables
-                if (newWordSyllables > requiredSyllables) {
-                    syllableBonus = (newWordSyllables - requiredSyllables) * 5;
+                if (newWordSyllables > 2) {
+                    syllableBonus = (newWordSyllables - 2) * 5;
                 }
 
                 let speedMessage = "";
-                // Time bonus logic remains the same as time is 30s for both now
-                if (timeLeft >= 20) {
-                    timeBonus = 10;
-                    speedMessage = "Speed bonus: +10!";
-                } else if (timeLeft >= 10) {
-                    timeBonus = 5;
-                    speedMessage = "Speed bonus: +5!";
+                if (gameMode === 'basic') {
+                    if (timeLeft >= 20) {
+                        timeBonus = 10;
+                        speedMessage = "Speed bonus: +10!";
+                    } else if (timeLeft >= 10) {
+                        timeBonus = 5;
+                        speedMessage = "Speed bonus: +5!";
+                    }
+                } else { // Advanced mode
+                    if (timeLeft >= 10) {
+                        timeBonus = 15;
+                        speedMessage = "Speed bonus: +15!";
+                    } else if (timeLeft >= 5) {
+                        timeBonus = 7;
+                        speedMessage = "Speed bonus: +7!";
+                    }
                 }
 
                 currentScore += (baseScore + timeBonus + syllableBonus);
@@ -806,15 +1009,12 @@ async function loadCMUDict() {
 
                 // --- NEW: Level 1 Completion Check ---
                 if (gameMode === 'basic' && currentStreak === LEVEL1_TARGET_STREAK) {
-                    messageDisplay.textContent = "🎉 LEVEL 1 COMPLETE! 🎉 You've achieved a streak of 10.";
-                    // Permanently unlock advanced mode (optional, for persistent unlock across sessions)
-                    localStorage.setItem('phonoAdvancedUnlocked', 'true');
+                    messageDisplay.textContent += " 🎉 LEVEL 1 COMPLETE! 🎉 You've achieved a streak of 10. You can now try Level 2 (Advanced Mode)!";
                     modeRadios.forEach(radio => {
-                        if (radio.value === 'advanced') radio.disabled = false;
+                        if (radio.value === 'advanced') {
+                            radio.disabled = false; // Enable Advanced mode radio button
+                        }
                     });
-
-                    endGame("LEVEL_COMPLETE"); // Pass a unique string to identify completion
-                    return; // Stop further processing for this submission
                 }
                 // --- END NEW ---
 
@@ -824,143 +1024,123 @@ async function loadCMUDict() {
                 updateDisplay();
                 startTimer();
             } else {
-                let finalFailMessage = messageDisplay.textContent;
-                // Update this message to be dynamic based on current game mode's syllable requirement
-                let requiredSyllables = gameMode === 'basic' ? MIN_SYLLABLES_BASIC : MIN_SYLLABLES_ADVANCED;
-                if (finalFailMessage.includes("syllables")) { // If message already about syllables, keep it
-                    // No change needed, messageDisplay was set by transferSound
-                } else {
+                let finalFailMessage = messageDisplay.textContent; 
+                if (!finalFailMessage.includes("syllables")) {
                     finalFailMessage = `Game over! "${newWord}" does not share a valid sound with "${currentWord}".`;
-                    // Add specific syllable failure if the word failed that condition
-                    if (syllable(newWord) < requiredSyllables) { // Re-check syllables for the failure message
-                        finalFailMessage = `Game over! "${newWord}" must have at least ${requiredSyllables} syllables.`;
-                    }
                 }
                 endGame(finalFailMessage);
             }
         }
 
+        // === HINT FUNCTIONALITY ===
         function getHint() {
-            if (currentScore < 20) {
-                hintDisplay.textContent = "Not enough points for a hint (20 points required).";
+            const HINT_COST = 20;
+
+            console.log("getHint called. Current score:", currentScore, "Game active:", gameActive, "Current word:", currentWord);
+            if (!gameActive) {
+                hintDisplay.textContent = "Start a game to get a hint!";
+                console.log("Hint not given: Game not active.");
+                return;
+            }
+            if (currentScore < HINT_COST) { 
+                hintDisplay.textContent = `Not enough points (need ${HINT_COST}) for a hint.`;
+                console.log("Hint not given: Not enough points.");
                 return;
             }
 
-            currentScore -= 20; // Deduct hint cost
+            stopTimer(); 
+            hintDisplay.textContent = "Finding a hint...";
+            hintButton.disabled = true; 
+
+            currentScore -= HINT_COST; 
             updateDisplay();
-            hintDisplay.textContent = "Searching for hint...";
+            messageDisplay.textContent = `${HINT_COST} points deducted for a hint!`;
 
-            let foundHint = null;
-            let currentWordPhones = pronouncing.phonesForWord(currentWord.toLowerCase());
-            let requiredSyllables = gameMode === 'basic' ? MIN_SYLLABLES_BASIC : MIN_SYLLABLES_ADVANCED;
+            let foundHintWord = null;
+            const maxHintSearchAttempts = 5000; // Increased for better chance of finding a word
+            const dictionaryWords = Object.keys(pronouncing.getDictionary());
+            let attempts = 0;
 
-            // Iterate through common words to find a valid next word
-            for (let word of commonWords) {
-                if (!usedWords.includes(word) && 
-                    syllable(word) >= requiredSyllables &&
-                    transferSound(currentWord, word, true)) { // Use isHintCheck = true
-                    foundHint = word;
-                    break;
+            // Use a small delay to allow UI to update, and prevent freezing
+            setTimeout(() => {
+                while (attempts < maxHintSearchAttempts && !foundHintWord) {
+                    const potentialHintWord = getRandomElement(dictionaryWords);
+
+                    if (usedWords.includes(potentialHintWord)) {
+                        attempts++;
+                        continue;
+                    }
+
+                    const hintWordPhones = pronouncing.phonesForWord(potentialHintWord);
+                    if (!hintWordPhones || hintWordPhones.length === 0) {
+                        attempts++;
+                        continue;
+                    }
+                    
+                    // transferSound handles syllable check internally
+                    const commonChunk = transferSound(currentWord, potentialHintWord, true); // true for isHintCheck
+
+                    if (commonChunk) {
+                        foundHintWord = potentialHintWord;
+                        break; 
+                    }
+                    attempts++;
                 }
-            }
 
-            if (foundHint) {
-                hintDisplay.textContent = `Hint: Try "${foundHint.toUpperCase()}"`;
-            } else {
-                hintDisplay.textContent = "Sorry, no hint found for the current word!";
-            }
+                if (foundHintWord) {
+                    hintDisplay.textContent = `Hint: Try "${foundHintWord.toUpperCase()}"`;
+                    console.log("Hint found:", foundHintWord);
+                } else {
+                    hintDisplay.textContent = "Could not find an easy hint right now. Keep trying!";
+                    console.log(`No hint found after ${attempts} attempts for current word "${currentWord}".`);
+                }
+
+                hintButton.disabled = false; 
+                startTimer(); 
+            }, 50); 
         }
 
-        // === SOCIAL SHARING FUNCTIONS ===
-        function copyShareMessage() {
-            const message = `I just scored ${currentScore} points with a streak of ${currentStreak} in Phono! Can you beat my score?`;
-            navigator.clipboard.writeText(message)
-                .then(() => {
-                    alert('Score message copied to clipboard!');
-                })
-                .catch(err => {
-                    console.error('Failed to copy message: ', err);
-                    alert('Could not copy message. Please copy manually:\n' + message);
-                });
+
+        // === SHARING FUNCTIONS ===
+
+        function getGameURL() {
+            return window.location.href.split('?')[0]; 
+        }
+
+        function generateShareMessage() {
+            const gameURL = getGameURL();
+            return `I just scored ${currentScore} points and got a ${currentStreak} streak in Phono! My highest session streak was ${highestSessionStreak}. Can you beat me? Play here: ${gameURL}`; 
+        }
+
+        async function copyShareMessage() {
+            try {
+                const message = generateShareMessage();
+                await navigator.clipboard.writeText(message);
+                alert("Score message copied to clipboard!");
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                alert("Failed to copy message. Please copy manually: " + generateShareMessage());
+            }
         }
 
         function shareOnFacebook() {
-            const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(`I just scored ${currentScore} points with a streak of ${currentStreak} in Phono! Can you beat my score?`)}`;
-            window.open(shareUrl, '_blank');
+            const message = generateShareMessage();
+            const gameURL = getGameURL();
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(message)}&u=${encodeURIComponent(gameURL)}`;
+            window.open(facebookUrl, '_blank', 'width=600,height=400');
         }
 
         function generateChallengeLink() {
-            const challengeUrl = `${window.location.origin}${window.location.pathname}?challengeWord=${currentWord.toUpperCase()}`;
-            navigator.clipboard.writeText(challengeUrl)
-                .then(() => {
-                    alert('Challenge link copied to clipboard! Share it with a friend!');
-                })
-                .catch(err => {
-                    console.error('Failed to copy challenge link: ', err);
-                    alert("Challenge link: " + challengeUrl + " (Please copy manually)");
-                });
-        }
-
-        // === INITIALIZATION ===
-
-        // New helper function to wait for 'pronouncing' to be available
-        function waitForPronouncing() {
-            return new Promise((resolve) => {
-                const checkInterval = setInterval(() => {
-                    if (typeof window.pronouncing !== 'undefined' && typeof window.pronouncing.addPhones === 'function') {
-                        clearInterval(checkInterval);
-                        resolve();
-                    }
-                }, 50); // Check every 50 milliseconds
-            });
-        }
-
-        async function initGame() {
-            // First, wait for the 'pronouncing' library to be fully ready
-            await waitForPronouncing(); 
-            console.log("Pronouncing library is ready."); // Add log to confirm
-
-            // Check for challenge word in URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const challengeWord = urlParams.get('challengeWord');
-            if (challengeWord) {
-                // Clear the challengeWord from the URL to prevent re-using on refresh
-                history.replaceState(null, '', window.location.pathname);
-            }
-
-            await loadCMUDict();
-            await loadWordList();
-
-	    console.log("DEBUG: cmudict keys count after loading:", Object.keys(cmudict).length); 
-            console.log("DEBUG: wordList size after loading:", wordList.size);
-
-
-            // Load saved high score and top scores
-            const savedHighScore = localStorage.getItem('phonoHighScore');
-            if (savedHighScore) {
-                highScoreDisplay.textContent = savedHighScore;
-            }
-            const savedTopScores = localStorage.getItem('phonoTopScores');
-            if (savedTopScores) {
-                topScores = JSON.parse(savedTopScores);
-            }
-            updateTopScoresDisplay();
-
-            // Check if Advanced mode was previously unlocked
-            const advancedUnlocked = localStorage.getItem('phonoAdvancedUnlocked') === 'true';
-            if (advancedUnlocked) {
-                modeRadios.forEach(radio => {
-                    if (radio.value === 'advanced') {
-                        radio.disabled = false;
-                    }
-                });
-            }
-
-            // If a challenge word is present, start game directly
-            if (challengeWord) {
-                startGame(challengeWord);
-            } else {
-                updateDisplay(); // Initial display update
+            const gameURL = getGameURL();
+            const encodedWord = encodeURIComponent(currentWord);
+            const challengeUrl = `${gameURL}?challengeWord=${encodedWord}`;
+            
+            try {
+                navigator.clipboard.writeText(challengeUrl);
+                alert(`Challenge link copied to clipboard! Share this link to challenge a friend to continue from "${currentWord.toUpperCase()}".`);
+            } catch (err) {
+                console.error('Failed to copy challenge link: ', err);
+                alert("Challenge link: " + challengeUrl + " (Please copy manually)");
             }
         }
 
