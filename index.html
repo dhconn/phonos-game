@@ -240,8 +240,8 @@
         </div>
     </div>
 
-    <script src="pronouncing.min.js"></script>
-	
+	<script src="pronouncing.min.js"></script>
+
     <script>
         // === DOM ELEMENTS ===
         const currentWordDisplay = document.getElementById('currentWordDisplay');
@@ -439,30 +439,48 @@
         }
 
         // Loads the CMU Pronouncing Dictionary
-        async function loadCMUDict() {
+
+async function loadCMUDict() {
             try {
-                // Temporarily only try the GitHub raw URL for debugging CORB
-                let response = await fetch('https://raw.githubusercontent.com/cmusphinx/cmudict/master/cmudict.dict');
-                console.log('CMUDict fetch response:', response.ok, response.status); // NEW LOG
+                const response = await fetch('cmu.dict');
+                console.log('CMUDict fetch response:', response.ok, response.status);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch cmudict.dict from GitHub: ${response.statusText}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const text = await response.text();
-                text.split('\n').forEach(line => {
-                    const parts = line.split('  '); // Two spaces are delimiter
-                    if (parts.length === 2) {
-                        const word = parts[0].toLowerCase().replace(/\(\d+\)$/, ''); // Remove (N) suffixes
-                        const phones = parts[1].trim();
-                        cmudict[word] = cmudict[word] ? [...cmudict[word], phones] : [phones];
+                const lines = text.split('\n');
+                console.log(`DEBUG: CMU Dict file has ${lines.length} lines.`); // NEW LOG
+
+                cmudict = {}; // Ensure cmudict is reset/cleared before populating
+
+                let populatedEntries = 0; // NEW COUNTER
+                lines.forEach((line, index) => {
+                    // Standard CMU dictionary uses two spaces as a delimiter
+                    const parts = line.split('  '); 
+                    
+                    if (parts.length >= 2) { 
+                        const word = parts[0].trim(); // Trim any whitespace from the word
+                        // Split the phonemes by single space and trim each one
+                        const phones = parts[1].trim().split(' ').filter(p => p); 
+
+                        if (word && phones.length > 0) { // Ensure word and phones are not empty
+                            cmudict[word.toLowerCase()] = phones;
+                            populatedEntries++;
+                            // Log a few examples at the start and every 10,000 entries
+                            if (populatedEntries <= 5 || populatedEntries % 10000 === 0) {
+                                console.log(`DEBUG: Parsed line ${index}: Word='${word.toLowerCase()}', Phones=[${phones.join(', ')}]`);
+                            }
+                        }
                     }
                 });
-                pronouncing.addPhones(cmudict);
-                console.log('CMU Pronouncing Dictionary loaded.');
+                console.log(`DEBUG: cmudict populated with ${populatedEntries} entries from ${lines.length} lines.`); // NEW LOG
+                console.log("CMU Pronouncing Dictionary loaded.");
             } catch (error) {
                 console.error('Error loading CMU Pronouncing Dictionary:', error);
-                messageDisplay.textContent = 'Failed to load dictionary. Game may not function correctly.';
+                messageDisplay.textContent = 'Failed to load dictionary. Please try again.';
             }
         }
+
 
         // Loads a common English word list
         async function loadWordList() {
