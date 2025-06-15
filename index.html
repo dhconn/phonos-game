@@ -1044,7 +1044,6 @@
                 let baseScore = 10;
                 let timeBonus = (timeLeft >= 20) ? 10 : (timeLeft >= 10) ? 5 : 0;
                 let syllableBonus = (newWordSyllables > 2) ? (newWordSyllables - 2) * 5 : 0;
-                let sharedBonus = countSharedPhonemes(prevWordPhonemes, newWordPhonemes) * 10;
 		let numberOfSharedPhonemes = countSharedPhonemes(prevWordPhonemes, newWordPhonemes);
 		// A multiplier of 10 means: 1 shared = 10 pts, 2 shared = 40 pts, 3 shared = 90 pts
 		const SHARED_BONUS_MULTIPLIER = 10; 
