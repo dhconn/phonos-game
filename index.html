@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phono</title> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>Phono</title> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
     <style>
@@ -973,99 +974,109 @@
             }
         }
 
+    // NEW HELPER FUNCTION TO COUNT SHARED PHONEMES
+    function countSharedPhonemes(phones1, phones2) {
+        if (!phones1 || !phones2) {
+            return 0;
+        }
+        const set1 = new Set(phones1);
+        const set2 = new Set(phones2);
+        let sharedCount = 0;
+        for (const phone of set1) {
+            if (set2.has(phone)) {
+                sharedCount++;
+            }
+        }
+        return sharedCount;
+    }
+
         // === HANDLE WORD SUBMISSION ===
         async function handleSubmit() {
-            if (!gameActive) return;
-
+ 	// Check if game is in progress
+        if (!gameActive) {
+            messageDisplay.textContent = "Game not started. Click 'Start Game' to begin!";
+            return;
+	}
             const newWord = wordInput.value.trim().toLowerCase();
             wordInput.value = '';
             hintDisplay.textContent = ""; // Clear hint display on new submission
 
+	// Basic validation
             if (!newWord) {
                 messageDisplay.textContent = "Please enter a word.";
                 startTimer();
                 return;
             }
-
             if (usedWords.includes(newWord)) {
-                messageDisplay.textContent = `"${newWord}" has already been used this round. Try another word.`;
+                messageDisplay.textContent = `"${newWord}" already used. Try another.`;
                 startTimer();
                 return;
             }
-
             if (!pronouncing.phonesForWord(newWord)) {
-                messageDisplay.textContent = `"${newWord}" is not found in the dictionary. Try another word.`;
+                messageDisplay.textContent = `"${newWord}" not in dictionary.`;
                 return;
             }
 
             stopTimer();
 
-            // Call transferSound without the isHintCheck parameter (it defaults to false)
-            const commonChunk = transferSound(currentWord, newWord); 
-            if (commonChunk) {
+            try {
+                // Get phonemes for both words
+                const prevWordPhonemes = pronouncing.phonesForWord(currentWord)[0].map(cleanPhoneme);
+                const newWordPhonemes = pronouncing.phonesForWord(newWord)[0].map(cleanPhoneme);
+
+                // Check sound transfer
+                const commonChunk = transferSound(currentWord, newWord);
+                if (!commonChunk) {
+                    endGame(`Game over! "${newWord}" doesn't share a sound with "${currentWord}".`);
+                    return;
+                }
+
+                // Calculate bonuses
+                const newWordSyllables = syllable(newWord);
+                if (newWordSyllables < 2) {
+                    endGame(`Game over! "${newWord}" needs ≥2 syllables.`);
+                    return;
+                }
+
+		// Scoring
+                let baseScore = 10;
+                let timeBonus = (timeLeft >= 20) ? 10 : (timeLeft >= 10) ? 5 : 0;
+                let syllableBonus = (newWordSyllables > 2) ? (newWordSyllables - 2) * 5 : 0;
+                let sharedBonus = countSharedPhonemes(prevWordPhonemes, newWordPhonemes) * 10;
+
+                // Update game state
+                currentScore += baseScore + timeBonus + syllableBonus + sharedBonus;
                 currentStreak++;
                 usedWords.push(newWord);
-                updateWordsUsedDisplay();
-
-                let baseScore = 10;
-                let timeBonus = 0;
-                let syllableBonus = 0;
-
-                const newWordSyllables = syllable(newWord);
-                if (newWordSyllables > 2) {
-                    syllableBonus = (newWordSyllables - 2) * 5;
-                }
-
-                let speedMessage = "";
-                if (gameMode === 'basic') {
-                    if (timeLeft >= 20) {
-                        timeBonus = 10;
-                        speedMessage = "Speed bonus: +10!";
-                    } else if (timeLeft >= 10) {
-                        timeBonus = 5;
-                        speedMessage = "Speed bonus: +5!";
-                    }
-                } else { // Advanced mode
-                    if (timeLeft >= 10) {
-                        timeBonus = 15;
-                        speedMessage = "Speed bonus: +15!";
-                    } else if (timeLeft >= 5) {
-                        timeBonus = 7;
-                        speedMessage = "Speed bonus: +7!";
-                    }
-                }
-
-                currentScore += (baseScore + timeBonus + syllableBonus);
-
-                let feedbackMessage = `"${newWord}" shares sound "${commonChunk}" with "${currentWord}"!`;
-                if (speedMessage) feedbackMessage += ` ${speedMessage}`;
-                if (syllableBonus > 0) feedbackMessage += ` Syllable bonus: +${syllableBonus}!`;
-                messageDisplay.textContent = feedbackMessage;
-
-                // --- NEW: Level 1 Completion Check ---
-                if (gameMode === 'basic' && currentStreak === LEVEL1_TARGET_STREAK) {
-                    messageDisplay.textContent += " 🎉 LEVEL 1 COMPLETE! 🎉 You've achieved a streak of 10. You can now try Level 2 (Advanced Mode)!";
-                    modeRadios.forEach(radio => {
-                        if (radio.value === 'advanced') {
-                            radio.disabled = false; // Enable Advanced mode radio button
-                        }
-                    });
-                }
-                // --- END NEW ---
-
                 currentWord = newWord;
-                currentWordDisplay.textContent = currentWord.toUpperCase();
 
-                updateDisplay();
-                startTimer();
-            } else {
-                let finalFailMessage = messageDisplay.textContent; 
-                if (!finalFailMessage.includes("syllables")) {
-                    finalFailMessage = `Game over! "${newWord}" does not share a valid sound with "${currentWord}".`;
-                }
-                endGame(finalFailMessage);
-            }
-        }
+                // Display feedback
+                messageDisplay.textContent = `"${newWord}" shares "${commonChunk}"! ` +
+                                           `Score: +${baseScore}` +
+                                           (timeBonus ? `, Speed: +${timeBonus}` : "") +
+                                           (syllableBonus ? `, Syllables: +${syllableBonus}` : "") +
+                                           (sharedBonus ? `, Shared Sounds: +${sharedBonus}` : "");
+
+                // Level completion check
+		 if (gameMode === 'basic' && currentStreak === LEVEL1_TARGET_STREAK) {
+		        messageDisplay.textContent += " 🎉 LEVEL 1 COMPLETE! 🎉 You've achieved a streak of 10. You can now try Level 2 (Advanced Mode)!";
+		        modeRadios.forEach(radio => {
+		if (radio.value === 'advanced') {
+		                radio.disabled = false;
+		            }
+		 });
+	        }
+
+		    updateDisplay();
+		    startTimer();
+
+		} catch (error) {
+		console.error("Error in handleSubmit:", error); // Added console.error for better debugging
+		        // If an error occurs in the try block (e.g., dictionary lookup fails),
+		        // you might want to end the game or show a specific error message.
+	        endGame(`An unexpected error occurred: ${error.message}`);
+	    }
+      } // End of handleSubmit function
 
         // === HINT FUNCTIONALITY ===
         function getHint() {
