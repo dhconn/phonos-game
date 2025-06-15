@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phono</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"> 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
@@ -353,6 +352,7 @@
                 <li>Base points for each correct word.</li>
                 <li>**Time Bonus:** Earn extra points for submitting words quickly.</li>
                 <li>**Syllable Bonus:** Get bonus points for longer words (more syllables).</li>
+                <li>**Sound Chunk bonus:** Get more points for words that share more sound chunks!</li>
                 <li>**Hints:** Cost 20 points each.</li>
             </ul>
             <h4>Game Over:</h4>
@@ -1045,8 +1045,12 @@
                 let timeBonus = (timeLeft >= 20) ? 10 : (timeLeft >= 10) ? 5 : 0;
                 let syllableBonus = (newWordSyllables > 2) ? (newWordSyllables - 2) * 5 : 0;
                 let sharedBonus = countSharedPhonemes(prevWordPhonemes, newWordPhonemes) * 10;
+		let numberOfSharedPhonemes = countSharedPhonemes(prevWordPhonemes, newWordPhonemes);
+		// A multiplier of 10 means: 1 shared = 10 pts, 2 shared = 40 pts, 3 shared = 90 pts
+		const SHARED_BONUS_MULTIPLIER = 10; 
+		let sharedBonus = numberOfSharedPhonemes * numberOfSharedPhonemes * SHARED_BONUS_MULTIPLIER;                
 
-                // Update game state
+		// Update game state
                 currentScore += baseScore + timeBonus + syllableBonus + sharedBonus;
                 currentStreak++;
                 usedWords.push(newWord);
