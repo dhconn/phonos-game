@@ -50,7 +50,7 @@
             margin-bottom: 20px;
         }
 
-        .mode-selection label {
+	.mode-selection label {
             margin: 0 10px;
             font-size: 1.1em;
         }
@@ -259,6 +259,41 @@
             margin-bottom: 5px;
             line-height: 1.4;
         }
+
+	/* Styles specifically for screens with a maximum width of, say, 600px (typical for phones/small tablets) */
+	@media screen and (max-width: 600px) {
+	  body {
+            font-size: 14px; /* Make text slightly smaller for mobile */
+            padding: 10px; /* Reduce overall padding */
+    	}
+
+	    .container {
+                padding: 15px; /* Override for smaller screens */
+                border-radius: 5px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            input[type="text"],
+            button {
+                width: calc(100% - 10px); /* Make nearly full width (minus margins) */
+                margin: 5px 0; /* Stack vertically */
+                padding: 15px; /* Larger touch target */
+                font-size: 18px; /* Larger text */
+            }
+
+            .game-controls {
+                flex-direction: column; /* Stack if they were side-by-side */
+                align-items: stretch;
+            }
+
+            .button-group button {
+                margin: 5px 0; /* Stack buttons in a group */
+            }
+    }
     </style>
 </head>
 <body>
