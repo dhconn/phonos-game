@@ -329,6 +329,8 @@
             <button id="startGameButton" disabled aria-label="Start New Game">Start New Game</button>
             <button id="resetGameButton" style="display aria-label="Reset the game": none;" disabled>Reset Game</button>
             <button id="showRulesButton" aria-label="Show the game rules">Show Rules</button>
+	    <button id="pauseButton">Pause Game</button>
+	    <div id="pausesDisplay">Pauses Left: 2</div>
         </div>
 
         <div class="game-info">
@@ -498,6 +500,9 @@
         let timerInterval = null; // To hold the setInterval ID
         let gameActive = false; // To track if a game is currently running
         let currentWord = ''; // The word currently displayed for the player to respond to
+	let gamePaused = false;
+	let pausesAvailable = 2; // For example, 2 pauses per game/level
+	const PAUSE_COST_PER_USE = 25; // For example, 25 points per pause
 
         // --- NEW: Level 1 Target Streak ---
         const LEVEL1_TARGET_STREAK = 10;
@@ -525,6 +530,8 @@
         const challengeFriendButton = document.getElementById('challengeFriendButton');
         const hintButton = document.getElementById('hintButton'); 
         const hintDisplay = document.getElementById('hintDisplay'); 
+	const pauseButton = document.getElementById('pauseButton');
+	const pausesDisplay = document.getElementById('pausesDisplay');
 
 
         // === HELPER FUNCTIONS ===
@@ -736,6 +743,52 @@
             }
         }
 
+function togglePause() {
+    if (!gameActive) { // Cannot pause if game isn't even active
+        messageDisplay.textContent = "Game not started. Click 'Start Game' to begin!";
+        return;
+    }
+
+    if (!gamePaused) { // If game is currently running, pause it
+        if (pausesAvailable <= 0) {
+            messageDisplay.textContent = "No pauses left!";
+            return;
+        }
+
+        // Deduct points
+        currentScore = Math.max(0, currentScore - PAUSE_COST_PER_USE); // Ensure score doesn't go below 0
+        pausesAvailable--; // Decrease available pauses
+
+        // Update state
+        gamePaused = true;
+        clearInterval(timerInterval); // Stop the timer
+
+        // Update UI
+        wordInput.disabled = true; // Disable input while paused
+        submitButton.disabled = true; // Disable submit button
+        pauseButton.textContent = "Resume Game";
+        messageDisplay.textContent = `Game Paused! -${PAUSE_COST_PER_USE} points. Click to resume.`;
+        updateDisplay(); // Update score and other displays
+
+    } else { // If game is currently paused, resume it
+        // Update state
+        gamePaused = false;
+        startTimer(); // Resume the timer from where it left off
+
+        // Update UI
+        wordInput.disabled = false; // Enable input
+        submitButton.disabled = false; // Enable submit button
+        pauseButton.textContent = "Pause Game";
+        messageDisplay.textContent = ""; // Clear pause message (or revert to previous if desired)
+    }
+    updatePausesDisplay(); // Update the display for pauses left
+}
+
+function updatePausesDisplay() {
+    if (pausesDisplay) { // Check if the display element exists
+        pausesDisplay.textContent = `Pauses Left: ${pausesAvailable}`;
+    }
+}
         function endGame(message) {
             gameActive = false;
             stopTimer();
@@ -842,6 +895,14 @@
 
             resetGame(); // Reset any existing game state
             gameActive = true;
+	    pausesAvailable = 2; // Reset pauses on full game reset
+	    gamePaused = false; // Ensure game is not paused
+	    updatePausesDisplay();
+	    wordInput.disabled = false; // Ensure input is enabled
+	    submitButton.disabled = false; // Ensure submit button is enabled
+	    pauseButton.textContent = "Pause Game"; // Ensure button text is correct  // ...
+	    timeLeft = maxTimePerTurn; // Or your initial time setting
+	    updateDisplay(); // To show reset timer, score, etc.
 
             // Disable all mode radios once game starts
             modeRadios.forEach(radio => radio.disabled = true);
@@ -1018,6 +1079,10 @@
         if (!gameActive) {
             messageDisplay.textContent = "Game not started. Click 'Start Game' to begin!";
             return;
+	}
+	if (gamePaused) { // Prevent submission if paused
+        messageDisplay.textContent = "Game is paused. Click 'Resume Game' to continue.";
+        return;
 	}
             const newWord = wordInput.value.trim().toLowerCase();
             wordInput.value = '';
@@ -1226,6 +1291,8 @@
         });
 
         submitButton.addEventListener('click', handleSubmit);
+
+	pauseButton.addEventListener('click', togglePause);
 
         modeRadios.forEach(radio => {
             radio.addEventListener('change', (event) => {
