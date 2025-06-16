@@ -64,13 +64,24 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
+	    transition: background-color 0.3s ease, box-shadow 0.2s ease;
+            outline: none; /* remove default outline, will add custom */        }
+
+	/* Focus styles for accessibility */
+	button:focus {
+	    outline: 3px solid #ffd700; /* bright yellow outline for strong focus */
+	    outline-offset: 3px;
+	    box-shadow: 0 0 5px 2px #ffd700;
+	}
 
         button#startGameButton {
             background-color: #28a745;
             color: white;
         }
+
+	button#startGameButton:hover:enabled {
+	    background-color: #218838;
+	}
 
         button#startGameButton:hover:enabled {
             background-color: #218838;
@@ -81,10 +92,10 @@
             color: white;
         }
 
-        button#resetGameButton:hover:enabled {
-            background-color: #c82333;
-        }
-
+	button#resetGameButton:hover:enabled {
+	    background-color: #c82333;
+	}
+        
         button#submitButton {
             background-color: #007bff;
             color: white;
@@ -102,7 +113,14 @@
         button#showRulesButton:hover {
             background-color: #5a6268;
         }
-        
+       
+	/* Disabled buttons - slightly muted look */
+	button:disabled {
+	    opacity: 0.6;
+	    cursor: not-allowed;
+	    box-shadow: none;
+	}
+
         /* Styles for Share Buttons */
         #shareOptions button {
             background-color: #007bff; /* A default blue */
@@ -308,9 +326,9 @@
                 <label><input type="radio" name="gameMode" value="advanced" disabled> Advanced (15s)</label>
             </div>
 
-            <button id="startGameButton" disabled>Start New Game</button>
-            <button id="resetGameButton" style="display: none;" disabled>Reset Game</button>
-            <button id="showRulesButton">Show Rules</button>
+            <button id="startGameButton" disabled aria-label="Start New Game">Start New Game</button>
+            <button id="resetGameButton" style="display aria-label="Reset the game": none;" disabled>Reset Game</button>
+            <button id="showRulesButton" aria-label="Show the game rules">Show Rules</button>
         </div>
 
         <div class="game-info">
@@ -327,7 +345,7 @@
 
         <div id="inputSection">
             <input type="text" id="wordInput" placeholder="Enter word here" disabled>
-            <button id="submitButton" disabled>Submit Word</button>
+            <button id="submitButton" aria-label="Submit your answer" disabled>Submit Word</button>
         </div>
 
         <div id="hintSection">
@@ -659,6 +677,8 @@
             timerDisplay.textContent = timeLeft;
             highScoreDisplay.textContent = topScores.length > 0 ? topScores[0] : 0; 
             highestSessionStreakDisplay.textContent = highestSessionStreak;
+	    currentWordDisplay.textContent = currentWord.toUpperCase(); 
+
         }
 
         function updateWordsUsedDisplay() {
@@ -1073,6 +1093,7 @@
 	        }
 
 		    updateDisplay();
+		    updateWordsUsedDisplay();
 		    startTimer();
 
 		} catch (error) {
