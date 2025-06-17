@@ -321,10 +321,6 @@
         <h1>Phono</h1> <p id="gameTagline">Outthink. Outlink. Outlast.</p>
 	<div class="stats-item">Level: <span id="levelDisplay">1</span></div>
         <div class="game-controls">
-            <div class="mode-selection">
-                <label><input type="radio" name="gameMode" value="basic" checked disabled> Basic (30s)</label>
-                <label><input type="radio" name="gameMode" value="advanced" disabled> Advanced (15s)</label>
-            </div>
 
 	    <button id="startGameButton" disabled aria-label="Start New Game">Start New Game</button>
             <button id="resetGameButton" style="display: none;" disabled aria-label="Reset the game">Reset Game</button>
@@ -500,7 +496,6 @@
         let topScores = []; // Array to hold multiple top scores, saved to localStorage
         let highestSessionStreak = 0; // To track highest streak in the current browser session
         let usedWords = []; // To store words already used in the current round
-        let gameMode = 'basic'; // Default mode
         let maxTimePerTurn = 30; // Basic mode default
         let timeLeft = maxTimePerTurn;
         let timerInterval = null; // To hold the setInterval ID
@@ -534,7 +529,6 @@
         const topScoresList = document.getElementById('topScoresList');    // For the persistent top scores list
         const startGameButton = document.getElementById('startGameButton');
         const resetGameButton = document.getElementById('resetGameButton');
-        const modeRadios = document.querySelectorAll('input[name="gameMode"]');
         const currentWordDisplay = document.getElementById('currentWordDisplay');
         const wordInput = document.getElementById('wordInput');
         const submitButton = document.getElementById('submitButton');
@@ -686,14 +680,6 @@
                 messageDisplay.textContent = "Dictionary loaded. Ready to play!";
                 startGameButton.disabled = false;
                 // Only enable 'basic' mode by default, 'advanced' will be unlocked
-                modeRadios.forEach(radio => {
-                    if (radio.value === 'basic') {
-                        radio.disabled = false;
-                    } else {
-                        radio.disabled = true; // Keep advanced disabled initially
-                    }
-                });
-
 
                 const storedTopScores = localStorage.getItem('phonoTopScores'); // Changed key to phonoTopScores
                 if (storedTopScores) {
@@ -869,21 +855,6 @@
 
             startGameButton.style.display = 'inline-block';
             resetGameButton.style.display = 'none'; 
-            // Re-enable only 'basic' mode for next game, advanced stays disabled unless unlocked
-            modeRadios.forEach(radio => {
-                if (radio.value === 'basic') {
-                    radio.disabled = false;
-                } else if (radio.value === 'advanced') {
-                    // Only disable advanced if it was unlocked in a previous basic game
-                    // This retains its unlocked status for future games
-                    // But for starting a new game, it should be disabled if not previously unlocked.
-                    // This logic is tricky. Let's simplify:
-                    // If Level 1 was completed, leave Advanced enabled. Otherwise, disable.
-                    // The simplest is to always reset advanced to disabled.
-                    // If a player wants to select it, they should have completed Level 1 already.
-	          radio.disabled = !localStorage.getItem('phonoAdvancedUnlocked');
-                }
-            });
 
             shareOptions.style.display = 'block';
         }
@@ -918,14 +889,6 @@
 
             startGameButton.style.display = 'inline-block';
             resetGameButton.style.display = 'none';
-            // Reset mode radios state: only basic enabled, advanced depends on unlock status
-            modeRadios.forEach(radio => {
-                if (radio.value === 'basic') {
-                    radio.disabled = false;
-                } else if (radio.value === 'advanced') {
-                    radio.disabled = !localStorage.getItem('phonoAdvancedUnlocked');
-                }
-            });
 
             shareOptions.style.display = 'none';
         }
@@ -982,12 +945,6 @@
                 inForeverMode = true;
                 maxTimePerTurn = 10; // Forever mode could have a fixed, challenging time
                 localStorage.setItem('phonoAdvancedUnlocked', 'true'); // Unlock advanced mode permanently
-                // Make sure Advanced radio is enabled if it wasn't already
-                modeRadios.forEach(radio => {
-                    if (radio.value === 'advanced') {
-                        radio.disabled = false;
-                    }
-                });
                 displayLevelCompleteScreen(5, true); // Call with inForeverMode = true
                 return; // Exit as displayLevelCompleteScreen will handle next steps
             } else {
@@ -1017,18 +974,6 @@
             updateDisplay();
         }
 
-        function setGameMode(mode) {
-            gameMode = mode;
-            if (gameMode === 'basic') {
-                maxTimePerTurn = 30;
-            } else { // 'advanced' mode
-                maxTimePerTurn = 15;
-            }
-            timeLeft = maxTimePerTurn;
-            updateDisplay();
-            console.log(`Game mode set to ${gameMode}, time per turn: ${maxTimePerTurn}s`);
-        }
-
 	function startGame(startWord = null) {
             if (!pronouncing.isDictionaryLoaded()) {
                  messageDisplay.textContent = "Dictionary not loaded yet. Please wait.";
@@ -1039,7 +984,6 @@
             gameActive = true;
 
             // Disable all mode radios once game starts
-            modeRadios.forEach(radio => radio.disabled = true);
             startGameButton.style.display = 'none';
             resetGameButton.style.display = 'inline-block';
             resetGameButton.disabled = false; // Enable the Reset Game button
@@ -1406,12 +1350,6 @@
         submitButton.addEventListener('click', handleSubmit);
 
 	pauseButton.addEventListener('click', togglePause);
-
-        modeRadios.forEach(radio => {
-            radio.addEventListener('change', (event) => {
-                setGameMode(event.target.value);
-            });
-        });
 
         startGameButton.addEventListener('click', () => startGame());
 
