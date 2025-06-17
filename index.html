@@ -319,18 +319,18 @@
 <body>
     <div class="container">
         <h1>Phono</h1> <p id="gameTagline">Outthink. Outlink. Outlast.</p>
-
+	<div class="stats-item">Level: <span id="levelDisplay">1</span></div>
         <div class="game-controls">
             <div class="mode-selection">
                 <label><input type="radio" name="gameMode" value="basic" checked disabled> Basic (30s)</label>
                 <label><input type="radio" name="gameMode" value="advanced" disabled> Advanced (15s)</label>
             </div>
 
-            <button id="startGameButton" disabled aria-label="Start New Game">Start New Game</button>
-            <button id="resetGameButton" style="display aria-label="Reset the game": none;" disabled>Reset Game</button>
+	    <button id="startGameButton" disabled aria-label="Start New Game">Start New Game</button>
+            <button id="resetGameButton" style="display: none;" disabled aria-label="Reset the game">Reset Game</button>
             <button id="showRulesButton" aria-label="Show the game rules">Show Rules</button>
-	    <button id="pauseButton">Pause Game</button>
-	    <div id="pausesDisplay">Pauses Left: 2</div>
+	    <button id="pauseButton" aria-label="Pause or Resume Game">Pause Game</button>
+            <div id="pausesDisplay">Pauses Left: 2</div>
         </div>
 
         <div class="game-info">
@@ -351,7 +351,7 @@
         </div>
 
         <div id="hintSection">
-            <button id="hintButton" disabled>Get Hint (Cost: 20 pts)</button>
+            <button id="hintButton" disabled>Get Hint (Cost: 100 pts)</button>
             <p id="hintDisplay" class="message"></p>
         </div>
 
@@ -365,19 +365,25 @@
 		<li>**Syllable Rule:** Your new word must have **at least 2 syllables**.</li>
                 <li>**No Repeats:** You cannot use the same word twice in one game.</li>
                 <li>You have limited time per turn!</li>
-		<li>It takes 10 successful plays to complete Level 1.</li>
             </ol>
+            <h4>Climb through the Levels:</h4>
+	    <ul>
+		<li>It takes 10 successful plays to complete Level 1.</li>
+		<li>Each level takes 10 more plays, but you lose 5 seconds per word.</li>
+		<li>Try to get through all five levels - if you can.</li>
+		<li>After that you can play "forever mode" as long as you're able.</li>
+	    </ul>
             <h4>Scoring:</h4>
             <ul>
                 <li>Base points for each correct word.</li>
                 <li>**Time Bonus:** Earn extra points for submitting words quickly.</li>
                 <li>**Syllable Bonus:** Get bonus points for longer words (more syllables).</li>
                 <li>**Sound Chunk bonus:** Get more points for words that share more sound chunks!</li>
-                <li>**Hints:** Cost 20 points each.</li>
+                <li>**Hints:** Cost 100 points each.</li>
             </ul>
             <h4>Game Over:</h4>
             <ul>
-                <li>If you run out of time.</li>
+                <li>If you run out of time - although you can purchase a "Pause" for 100 points. </li>
                 <li>If your word does not share a valid sound with the previous word.</li>
                 <li>If your word has fewer than 2 syllables.</li>
             </ul>
@@ -502,10 +508,21 @@
         let currentWord = ''; // The word currently displayed for the player to respond to
 	let gamePaused = false;
 	let pausesAvailable = 2; // For example, 2 pauses per game/level
-	const PAUSE_COST_PER_USE = 25; // For example, 25 points per pause
+	const PAUSE_COST_PER_USE = 100; // For example, 25 points per pause
 
-        // --- NEW: Level 1 Target Streak ---
-        const LEVEL1_TARGET_STREAK = 10;
+	// --- NEW LEVEL-RELATED VARIABLES ---
+	let currentLevel = 1; // Start at Level 1
+	const LEVEL_TARGET_WORDS = 10; // Number of words needed to complete each level
+	// Map each level to its time limit (in seconds)
+	const LEVEL_TIMES = {
+	    1: 30, // Level 1: 30 seconds
+	    2: 25, // Level 2: 25 seconds
+	    3: 20, // Level 3: 20 seconds
+	    4: 15, // Level 4: 15 seconds
+	    5: 10  // Level 5: 10 seconds
+	};
+	let inForeverMode = false; // Flag to indicate if player is past Level 5
+	// --- END NEW LEVEL-RELATED VARIABLES ---
 
         // === DOM ELEMENTS ===
         const scoreDisplay = document.getElementById('scoreDisplay');
@@ -532,7 +549,7 @@
         const hintDisplay = document.getElementById('hintDisplay'); 
 	const pauseButton = document.getElementById('pauseButton');
 	const pausesDisplay = document.getElementById('pausesDisplay');
-
+	const levelDisplay = document.getElementById('levelDisplay');
 
         // === HELPER FUNCTIONS ===
 
@@ -590,7 +607,35 @@
         function getRandomElement(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
+	// Function to select a random word from the dictionary with at least 2 syllables
+        function selectRandomGameWord() {
+            const dictionaryWords = Object.keys(pronouncing.getDictionary());
+            if (dictionaryWords.length === 0) {
+                console.error("Error: Dictionary is empty, cannot select a random word.");
+                return null;
+            }
 
+            let foundWord = null;
+            let attempts = 0;
+            const maxAttempts = 500; // Increased attempts for robust word selection
+
+            while (!foundWord && attempts < maxAttempts) {
+                const potentialWord = dictionaryWords[Math.floor(Math.random() * dictionaryWords.length)];
+                try {
+                    if (syllable(potentialWord) >= 2) {
+                        foundWord = potentialWord;
+                    }
+                } catch (e) {
+                    console.error("Error checking syllables for potential random word:", potentialWord, e);
+                }
+                attempts++;
+            }
+
+            if (!foundWord) {
+                console.warn("Could not find a suitable random word (at least 2 syllables) after max attempts.");
+            }
+            return foundWord;
+        }
 
         // === DICTIONARY LOADING ===
         async function loadPronouncingDictionary() {
@@ -659,6 +704,7 @@
                 
                 updateDisplay();
                 updateTopScoresDisplay();
+                updatePausesDisplay(); // Call here to show initial pauses
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const challengeWord = urlParams.get('challengeWord');
@@ -685,7 +731,7 @@
             highScoreDisplay.textContent = topScores.length > 0 ? topScores[0] : 0; 
             highestSessionStreakDisplay.textContent = highestSessionStreak;
 	    currentWordDisplay.textContent = currentWord.toUpperCase(); 
-
+	    levelDisplay.textContent = inForeverMode ? "Forever" : currentLevel; // Show "Forever" or level number
         }
 
         function updateWordsUsedDisplay() {
@@ -743,7 +789,7 @@
             }
         }
 
-function togglePause() {
+	function togglePause() {
     if (!gameActive) { // Cannot pause if game isn't even active
         messageDisplay.textContent = "Game not started. Click 'Start Game' to begin!";
         return;
@@ -784,8 +830,8 @@ function togglePause() {
     updatePausesDisplay(); // Update the display for pauses left
 }
 
-function updatePausesDisplay() {
-    if (pausesDisplay) { // Check if the display element exists
+	function updatePausesDisplay() {
+	if (pausesDisplay) { // Check if the display element exists
         pausesDisplay.textContent = `Pauses Left: ${pausesAvailable}`;
     }
 }
@@ -796,6 +842,7 @@ function updatePausesDisplay() {
             submitButton.disabled = true;
             hintButton.disabled = true; 
             hintDisplay.textContent = ""; 
+            pauseButton.disabled = true; // Disable pause button at game end
             resetGameButton.disabled = true; // Ensure disabled at game end
             currentWordDisplay.textContent = "GAME OVER!";
             
@@ -834,10 +881,9 @@ function updatePausesDisplay() {
                     // If Level 1 was completed, leave Advanced enabled. Otherwise, disable.
                     // The simplest is to always reset advanced to disabled.
                     // If a player wants to select it, they should have completed Level 1 already.
-                    radio.disabled = true; 
+	          radio.disabled = !localStorage.getItem('phonoAdvancedUnlocked');
                 }
             });
-
 
             shareOptions.style.display = 'block';
         }
@@ -849,30 +895,126 @@ function updatePausesDisplay() {
             timeLeft = maxTimePerTurn;
             gameActive = false;
             usedWords = [];
+            currentLevel = 1; // Reset level
+            inForeverMode = false; // Reset forever mode
+            pausesAvailable = 2; // Reset pauses for a new game
+            gamePaused = false; // Ensure game is not paused
+
             updateWordsUsedDisplay();
             updateDisplay();
             updateTopScoresDisplay();
+            updatePausesDisplay(); // Update pause display on reset
+
             messageDisplay.textContent = "Click 'Start New Game' to begin!";
             currentWordDisplay.textContent = "";
             wordInput.value = '';
             wordInput.disabled = true;
             submitButton.disabled = true;
-            hintButton.disabled = true; 
-            hintDisplay.textContent = ""; 
+            hintButton.disabled = true;
+            hintDisplay.textContent = "";
+            pauseButton.disabled = true; // Disable pause button on reset
+            pauseButton.textContent = "Pause Game"; // Reset pause button text
             resetGameButton.disabled = true; // Ensure disabled after reset
 
             startGameButton.style.display = 'inline-block';
-            resetGameButton.style.display = 'none'; 
-            // Reset mode radios state: only basic enabled
+            resetGameButton.style.display = 'none';
+            // Reset mode radios state: only basic enabled, advanced depends on unlock status
             modeRadios.forEach(radio => {
                 if (radio.value === 'basic') {
                     radio.disabled = false;
-                } else {
-                    radio.disabled = true; 
+                } else if (radio.value === 'advanced') {
+                    radio.disabled = !localStorage.getItem('phonoAdvancedUnlocked');
                 }
             });
 
             shareOptions.style.display = 'none';
+        }
+
+	function displayLevelCompleteScreen(levelCompleted, inForeverMode = false) {
+            gameActive = false; // Pause game logic
+            stopTimer(); // Stop the timer
+
+            let message = "";
+            if (inForeverMode) {
+                message = `🎉 CONGRATULATIONS! You've conquered all levels! 🎉\nNow entering FOREVER MODE! See how far you can go!`;
+            } else {
+                message = `🎉 LEVEL ${levelCompleted} COMPLETE! 🎉\nGet ready for Level ${levelCompleted + 1}!`;
+            }
+
+            messageDisplay.textContent = message;
+            wordInput.disabled = true;
+            submitButton.disabled = true;
+            hintButton.disabled = true;
+            pauseButton.disabled = true; // Disable pause button during transition
+
+            // You might want to add a "Continue" button here that calls startNextLevel()
+            // For now, let's just automatically transition after a short delay
+            setTimeout(() => {
+                if (inForeverMode) {
+                    // In forever mode, just resume game with the same word, but potentially shorter time
+                    startNextTurn();
+                } else {
+                    startNextLevel();
+                }
+            }, 3000); // Wait 3 seconds before next level/turn
+        }
+
+	function startNextLevel() {
+	    currentLevel++;
+            currentStreak = 0; // Reset streak for the new level
+	    // Do NOT clear usedWords here. All previous words remain unusable.
+
+
+            const newRandomWord = selectRandomGameWord(); // <--- Get a brand new random word
+            if (!newRandomWord) {
+                messageDisplay.textContent = "Error: Could not find a suitable word for the next level.";
+                endGame("Failed to find next level word.");
+                return;
+            }
+            currentWord = newRandomWord; // <--- Set the new word as the current word
+
+            usedWords.push(currentWord); // <--- Add the new starting word to used words for this level
+            updateWordsUsedDisplay();
+            pausesAvailable = 2; // Reset pauses for the new level (optional, depends on your game design)
+            updatePausesDisplay();
+
+            if (currentLevel > 5) { // Assuming 5 is the max level before forever mode
+                inForeverMode = true;
+                maxTimePerTurn = 10; // Forever mode could have a fixed, challenging time
+                localStorage.setItem('phonoAdvancedUnlocked', 'true'); // Unlock advanced mode permanently
+                // Make sure Advanced radio is enabled if it wasn't already
+                modeRadios.forEach(radio => {
+                    if (radio.value === 'advanced') {
+                        radio.disabled = false;
+                    }
+                });
+                displayLevelCompleteScreen(5, true); // Call with inForeverMode = true
+                return; // Exit as displayLevelCompleteScreen will handle next steps
+            } else {
+                maxTimePerTurn = LEVEL_TIMES[currentLevel];
+            }
+
+            gameActive = true;
+            wordInput.disabled = false;
+            submitButton.disabled = false;
+            hintButton.disabled = false;
+            pauseButton.disabled = false;
+            messageDisplay.textContent = `Level ${currentLevel} started! Time per word: ${maxTimePerTurn}s.`;
+            wordInput.focus();
+            startTimer();
+            updateDisplay();
+        }
+
+        function startNextTurn() {
+            gameActive = true;
+            wordInput.disabled = false;
+            submitButton.disabled = false;
+            hintButton.disabled = false;
+            pauseButton.disabled = false;
+            messageDisplay.textContent = `Keep going in Forever Mode!`;
+            wordInput.focus();
+            startTimer();
+            updateDisplay();
         }
 
         function setGameMode(mode) {
@@ -887,7 +1029,7 @@ function updatePausesDisplay() {
             console.log(`Game mode set to ${gameMode}, time per turn: ${maxTimePerTurn}s`);
         }
 
-        function startGame(startWord = null) {
+	function startGame(startWord = null) {
             if (!pronouncing.isDictionaryLoaded()) {
                  messageDisplay.textContent = "Dictionary not loaded yet. Please wait.";
                  return;
@@ -895,14 +1037,6 @@ function updatePausesDisplay() {
 
             resetGame(); // Reset any existing game state
             gameActive = true;
-	    pausesAvailable = 2; // Reset pauses on full game reset
-	    gamePaused = false; // Ensure game is not paused
-	    updatePausesDisplay();
-	    wordInput.disabled = false; // Ensure input is enabled
-	    submitButton.disabled = false; // Ensure submit button is enabled
-	    pauseButton.textContent = "Pause Game"; // Ensure button text is correct  // ...
-	    timeLeft = maxTimePerTurn; // Or your initial time setting
-	    updateDisplay(); // To show reset timer, score, etc.
 
             // Disable all mode radios once game starts
             modeRadios.forEach(radio => radio.disabled = true);
@@ -912,44 +1046,23 @@ function updatePausesDisplay() {
 
             wordInput.disabled = false;
             submitButton.disabled = false;
-            hintButton.disabled = false; 
-            hintDisplay.textContent = ""; 
+            hintButton.disabled = false;
+            hintDisplay.textContent = "";
+            pauseButton.disabled = false; // Enable pause button at game start
+            updatePausesDisplay(); // Show initial pauses
             wordInput.focus();
 
             if (startWord && pronouncing.phonesForWord(startWord) && syllable(startWord) >= 2) {
                 currentWord = startWord;
-            } else {
-                const dictionaryWords = Object.keys(pronouncing.getDictionary());
-                if (dictionaryWords.length === 0) {
-                    messageDisplay.textContent = "Error: Dictionary is empty or failed to load.";
+} else {
+                const newRandomWord = selectRandomGameWord();
+                if (!newRandomWord) {
+                    messageDisplay.textContent = "Error: Could not find a suitable random starting word.";
                     endGame("Failed to find starting word.");
                     return;
                 }
-
-                let foundStartWord = false;
-                let attempts = 0;
-                const maxAttempts = 100; 
-
-                while (!foundStartWord && attempts < maxAttempts) {
-                    const potentialWord = dictionaryWords[Math.floor(Math.random() * dictionaryWords.length)];
-                    try {
-                        if (syllable(potentialWord) >= 2) {
-                            currentWord = potentialWord;
-                            foundStartWord = true;
-                        }
-                    } catch (e) {
-                        console.error("Error checking syllables for potential start word:", potentialWord, e);
-                    }
-                    attempts++;
-                }
-
-                if (!foundStartWord) {
-                    messageDisplay.textContent = "Could not find a suitable random starting word (at least 2 syllables). Try reloading.";
-                    endGame("Failed to find starting word.");
-                    return;
-                }
+                currentWord = newRandomWord;
             }
-
             usedWords.push(currentWord);
             updateWordsUsedDisplay();
             currentWordDisplay.textContent = currentWord.toUpperCase();
@@ -1073,105 +1186,105 @@ function updatePausesDisplay() {
         return sharedCount;
     }
 
-        // === HANDLE WORD SUBMISSION ===
-        async function handleSubmit() {
- 	// Check if game is in progress
-        if (!gameActive) {
-            messageDisplay.textContent = "Game not started. Click 'Start Game' to begin!";
-            return;
-	}
-	if (gamePaused) { // Prevent submission if paused
-        messageDisplay.textContent = "Game is paused. Click 'Resume Game' to continue.";
-        return;
-	}
-            const newWord = wordInput.value.trim().toLowerCase();
-            wordInput.value = '';
-            hintDisplay.textContent = ""; // Clear hint display on new submission
+     // === HANDLE WORD SUBMISSION ===
+     async function handleSubmit() {
+
+    // Check if game is in progress
+	if (!gameActive) {
+	        messageDisplay.textContent = "Game not started. Click 'Start Game' to begin!";
+	        return;
+	    }
+	    if (gamePaused) { // Prevent submission if paused
+	        messageDisplay.textContent = "Game is paused. Click 'Resume Game' to continue.";
+	        return;
+	    }
+	    const newWord = wordInput.value.trim().toLowerCase();
+	    wordInput.value = '';
+	    hintDisplay.textContent = ""; // Clear hint display on new submission
 
 	// Basic validation
-            if (!newWord) {
-                messageDisplay.textContent = "Please enter a word.";
-                startTimer();
-                return;
-            }
-            if (usedWords.includes(newWord)) {
-                messageDisplay.textContent = `"${newWord}" already used. Try another.`;
-                startTimer();
-                return;
-            }
-            if (!pronouncing.phonesForWord(newWord)) {
-                messageDisplay.textContent = `"${newWord}" not in dictionary.`;
-                return;
-            }
+	if (!newWord) {
+	        messageDisplay.textContent = "Please enter a word.";
+	        startTimer(); // Restart timer for next attempt
+	        return;
+	    }
+	if (usedWords.includes(newWord)) {
+	        messageDisplay.textContent = `"${newWord}" already used. Try another.`;
+	        startTimer(); // Restart timer for next attempt
+	        return;
+	    }
+	if (!pronouncing.phonesForWord(newWord)) {
+	        messageDisplay.textContent = `"${newWord}" not in dictionary.`;
+	        return; // Don't restart timer for invalid words not in dictionary
+	    }
 
-            stopTimer();
+	    stopTimer(); // Stop timer as soon as a valid-looking word is submitted
 
-            try {
-                // Get phonemes for both words
-                const prevWordPhonemes = pronouncing.phonesForWord(currentWord)[0].map(cleanPhoneme);
-                const newWordPhonemes = pronouncing.phonesForWord(newWord)[0].map(cleanPhoneme);
+	try {
+	// Get phonemes for both words
+	// This line might cause an error if currentWordPhonemes wasn't properly initialized in startGame
+	        const prevWordPhonemes = pronouncing.phonesForWord(currentWord)[0].map(cleanPhoneme);
+	        const newWordPhonemes = pronouncing.phonesForWord(newWord)[0].map(cleanPhoneme);
 
-                // Check sound transfer
-                const commonChunk = transferSound(currentWord, newWord);
-                if (!commonChunk) {
-                    endGame(`Game over! "${newWord}" doesn't share a sound with "${currentWord}".`);
-                    return;
-                }
-
-                // Calculate bonuses
-                const newWordSyllables = syllable(newWord);
-                if (newWordSyllables < 2) {
-                    endGame(`Game over! "${newWord}" needs ≥2 syllables.`);
-                    return;
-                }
-
-		// Scoring
-                let baseScore = 10;
-                let timeBonus = (timeLeft >= 20) ? 10 : (timeLeft >= 10) ? 5 : 0;
-                let syllableBonus = (newWordSyllables > 2) ? (newWordSyllables - 2) * 5 : 0;
-		let numberOfSharedPhonemes = countSharedPhonemes(prevWordPhonemes, newWordPhonemes);
-		// A multiplier of 10 means: 1 shared = 10 pts, 2 shared = 40 pts, 3 shared = 90 pts
-		const SHARED_BONUS_MULTIPLIER = 10; 
-		let sharedBonus = numberOfSharedPhonemes * numberOfSharedPhonemes * SHARED_BONUS_MULTIPLIER;                
-
-		// Update game state
-                currentScore += baseScore + timeBonus + syllableBonus + sharedBonus;
-                currentStreak++;
-                usedWords.push(newWord);
-                currentWord = newWord;
-
-                // Display feedback
-                messageDisplay.textContent = `"${newWord}" shares "${commonChunk}"! ` +
-                                           `Score: +${baseScore}` +
-                                           (timeBonus ? `, Speed: +${timeBonus}` : "") +
-                                           (syllableBonus ? `, Syllables: +${syllableBonus}` : "") +
-                                           (sharedBonus ? `, Shared Sounds: +${sharedBonus}` : "");
-
-                // Level completion check
-		 if (gameMode === 'basic' && currentStreak === LEVEL1_TARGET_STREAK) {
-		        messageDisplay.textContent += " 🎉 LEVEL 1 COMPLETE! 🎉 You've achieved a streak of 10. You can now try Level 2 (Advanced Mode)!";
-		        modeRadios.forEach(radio => {
-		if (radio.value === 'advanced') {
-		                radio.disabled = false;
-		            }
-		 });
+                   // Check sound transfer
+	        const commonChunk = transferSound(currentWord, newWord);
+	        if (!commonChunk) {
+	            endGame(`Game over! "${newWord}" doesn't share a sound with "${currentWord}".`);
+	            return;
 	        }
 
-		    updateDisplay();
-		    updateWordsUsedDisplay();
-		    startTimer();
+               // Calculate bonuses
+	        const newWordSyllables = syllable(newWord);
+	        if (newWordSyllables < 2) {
+	            endGame(`Game over! "${newWord}" needs ≥2 syllables.`);
+	            return;
+	        }
 
-		} catch (error) {
-		console.error("Error in handleSubmit:", error); // Added console.error for better debugging
-		        // If an error occurs in the try block (e.g., dictionary lookup fails),
-		        // you might want to end the game or show a specific error message.
-	        endGame(`An unexpected error occurred: ${error.message}`);
-	    }
-      } // End of handleSubmit function
+               // Scoring
+	        let baseScore = 10;
+	        let timeBonus = (timeLeft >= 20) ? 10 : (timeLeft >= 10) ? 5 : 0;
+	        let syllableBonus = (newWordSyllables > 2) ? (newWordSyllables - 2) * 5 : 0;
+	        let numberOfSharedPhonemes = countSharedPhonemes(prevWordPhonemes, newWordPhonemes);
+	        const SHARED_BONUS_MULTIPLIER = 10;
+	        let sharedBonus = numberOfSharedPhonemes * numberOfSharedPhonemes * SHARED_BONUS_MULTIPLIER;
+
+              // Update game state
+	        currentScore += baseScore + timeBonus + syllableBonus + sharedBonus;
+	        currentStreak++;
+	        usedWords.push(newWord);
+	        currentWord = newWord;
+
+              // Display feedback
+      	  messageDisplay.textContent = `"${newWord}" shares "${commonChunk}"! ` +
+                                     `Score: +${baseScore}` +
+                                     (timeBonus ? `, Speed: +${timeBonus}` : "") +
+                                     (syllableBonus ? `, Syllables: +${syllableBonus}` : "") +
+                                     (sharedBonus ? `, Shared Sounds: +${sharedBonus}` : "");
+
+	// Start Level completion check 
+                  if (!inForeverMode && currentStreak >= LEVEL_TARGET_WORDS) {
+                    displayLevelCompleteScreen(currentLevel, false); // Pass false for inForeverMode
+                    return; // Stop handleSubmit, the level complete screen will manage next steps
+                }
+
+                // If in forever mode or not enough words for next level, just start next turn
+                startTimer(); // This starts the timer for the *next* turn after a successful word (if not a level transition)
+             // --- END Level Progression Logic ---
+
+             // These lines only execute if NO level transition occurred (i.e., game continues normally)
+	        updateDisplay();
+	        updateWordsUsedDisplay();
+	        startTimer();
+
+	    } catch (error) { // This is the 'catch' block for the 'try'
+	        console.error("Error in handleSubmit:", error);
+	        endGame(`An unexpected error occurred: ${error.message}`);
+         }
+} // This is the end of the handleSubmit function
 
         // === HINT FUNCTIONALITY ===
         function getHint() {
-            const HINT_COST = 20;
+            const HINT_COST = 100;
 
             console.log("getHint called. Current score:", currentScore, "Game active:", gameActive, "Current word:", currentWord);
             if (!gameActive) {
@@ -1318,6 +1431,7 @@ function updatePausesDisplay() {
         facebookShareButton.addEventListener('click', shareOnFacebook);
         challengeFriendButton.addEventListener('click', generateChallengeLink);
         hintButton.addEventListener('click', getHint); 
+	pauseButton.addEventListener('click', togglePause); 
     </script>
 </body>
 </html>
