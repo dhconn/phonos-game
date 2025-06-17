@@ -503,6 +503,8 @@
         let currentWord = ''; // The word currently displayed for the player to respond to
 	let gamePaused = false;
 	let pausesAvailable = 2; // For example, 2 pauses per game/level
+        let awaitingNextLevel = false; // Flag to control starting next level manually
+
 	const PAUSE_COST_PER_USE = 100; // For example, 25 points per pause
 
 	// --- NEW LEVEL-RELATED VARIABLES ---
@@ -870,6 +872,7 @@
             inForeverMode = false; // Reset forever mode
             pausesAvailable = 2; // Reset pauses for a new game
             gamePaused = false; // Ensure game is not paused
+            awaitingNextLevel = false; // Reset the flag
 
             updateWordsUsedDisplay();
             updateDisplay();
@@ -905,6 +908,17 @@
             }
 
             messageDisplay.textContent = message;
+            awaitingNextLevel = true; // Set flag to indicate we're waiting for player to continue
+
+            startGameButton.textContent = "Continue to Next Level"; // Change button text
+            startGameButton.style.display = 'inline-block'; // Make button visible
+            startGameButton.disabled = false; // Ensure button is clickable
+
+            // Disable game inputs while on the level complete screen
+            wordInput.disabled = true;
+            submitButton.disabled = true;
+            hintButton.disabled = true;
+            pauseButton.disabled = true; // Also disable pause button
             wordInput.disabled = true;
             submitButton.disabled = true;
             hintButton.disabled = true;
@@ -912,14 +926,7 @@
 
             // You might want to add a "Continue" button here that calls startNextLevel()
             // For now, let's just automatically transition after a short delay
-            setTimeout(() => {
-                if (inForeverMode) {
-                    // In forever mode, just resume game with the same word, but potentially shorter time
-                    startNextTurn();
-                } else {
-                    startNextLevel();
-                }
-            }, 3000); // Wait 3 seconds before next level/turn
+
         }
 
 	function startNextLevel() {
@@ -1351,8 +1358,18 @@
 
 	pauseButton.addEventListener('click', togglePause);
 
-        startGameButton.addEventListener('click', () => startGame());
-
+	startGameButton.addEventListener('click', () => {
+	if (awaitingNextLevel) {
+                    // If we're waiting for the player to continue to the next level
+    	            awaitingNextLevel = false; // Reset the flag
+	startGameButton.style.display = 'none'; // Hide the "Continue" button
+	startGameButton.textContent = "Start New Game"; // Reset button text for future use
+	startNextLevel(); // Start the next level
+	} else {
+                   // Otherwise, it's a regular start game click
+	startGame();
+            }
+        });
         resetGameButton.addEventListener('click', resetGame);
 
         showRulesButton.addEventListener('click', () => {
