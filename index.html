@@ -114,6 +114,73 @@
             background-color: #5a6268;
         }
        
+	/* Rules Section as a Modal Overlay */
+        #rulesSection {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stays in the same position even if the page scrolls */
+            z-index: 1001; /* High z-index to be on top of other content */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if content is too long */
+            background-color: rgba(0, 0, 0, 0.8); /* Black w/ opacity - dark overlay */
+            display: flex; /* Use flexbox to center content */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+
+        .rules-content {
+            background-color: #E0F2F7; /* White background for the content box */
+            margin: auto; /* Centers the box */
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 90%; /* Adjust as needed */
+            max-width: 700px; /* Max width for readability */
+            max-height: 90vh; /* Max height for scrollability */
+            overflow-y: auto; /* Allows scrolling within the rules box if content is long */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative; /* For positioning the close button inside */
+            text-align: left; /* Align text within the content box */
+        }
+
+        .rules-content h2 {
+            text-align: center;
+            color: #2a6f9a; /* Or your preferred heading color */
+            margin-bottom: 20px;
+        }
+
+        .rules-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .rules-content li {
+            margin-bottom: 8px;
+        }
+
+        .close-rules-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-rules-button:hover,
+        .close-rules-button:focus {
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* Optional: Hide main game elements when rules are shown if you prefer "instead of" */
+        /* You might need to add a class to your main container for this,
+           and toggle that class in JS. For now, we'll just overlay. */
 	/* Disabled buttons - slightly muted look */
 	button:disabled {
 	    opacity: 0.6;
@@ -353,7 +420,30 @@
 
         <p id="messageDisplay" class="message"></p>
 
-        <div id="rulesSection" style="display: none;">
+        <div id="shareOptions" style="display: none;">
+            <h4>Share Your Achievement!</h4>
+            <button id="copyShareButton">Copy Score Message</button>
+            <button id="facebookShareButton">Share on Facebook</button>
+            <button id="challengeFriendButton">Challenge a Friend</button>
+        </div>
+
+        <div id="wordsUsedSection">
+            <h4>Words Used This Round:</h4>
+            <ul id="wordsUsedList">
+                </ul>
+        </div>
+
+        <div id="topScoresSection">
+            <h4>Top Scores:</h4>
+            <ol id="topScoresList">
+                <li>N/A</li> </ol>
+        </div>
+
+    </div>
+
+    <div id="rulesSection" style="display: none;">
+      <div class="rules-content">
+        <span class="close-rules-button">&times;</span>
             <h4>How to Play Phono:</h4> <ol>
                 <li>The game starts with a word.</li>
                 <li>Your goal is to type a new word that **shares a common sound chunk** with the previous word.</li>
@@ -383,29 +473,8 @@
                 <li>If your word does not share a valid sound with the previous word.</li>
                 <li>If your word has fewer than 2 syllables.</li>
             </ul>
-            <p>Good luck and happy chaining!</p>
+            <p>Good luck and have a Phantastic Phono!</p>
         </div>
-
-        <div id="shareOptions" style="display: none;">
-            <h4>Share Your Achievement!</h4>
-            <button id="copyShareButton">Copy Score Message</button>
-            <button id="facebookShareButton">Share on Facebook</button>
-            <button id="challengeFriendButton">Challenge a Friend</button>
-        </div>
-
-        <div id="wordsUsedSection">
-            <h4>Words Used This Round:</h4>
-            <ul id="wordsUsedList">
-                </ul>
-        </div>
-
-        <div id="topScoresSection">
-            <h4>Top Scores:</h4>
-            <ol id="topScoresList">
-                <li>N/A</li> </ol>
-        </div>
-
-    </div>
 
     <script>
         // === PRONOUNCING.JS MODULE (EMBEDDED) ===
@@ -507,20 +576,6 @@
 
 	const PAUSE_COST_PER_USE = 100; // For example, 25 points per pause
 
-	// --- NEW LEVEL-RELATED VARIABLES ---
-	let currentLevel = 1; // Start at Level 1
-	const LEVEL_TARGET_WORDS = 10; // Number of words needed to complete each level
-	// Map each level to its time limit (in seconds)
-	const LEVEL_TIMES = {
-	    1: 30, // Level 1: 30 seconds
-	    2: 25, // Level 2: 25 seconds
-	    3: 20, // Level 3: 20 seconds
-	    4: 15, // Level 4: 15 seconds
-	    5: 10  // Level 5: 10 seconds
-	};
-	let inForeverMode = false; // Flag to indicate if player is past Level 5
-	// --- END NEW LEVEL-RELATED VARIABLES ---
-
         // === DOM ELEMENTS ===
         const scoreDisplay = document.getElementById('scoreDisplay');
         const streakDisplay = document.getElementById('streakDisplay');
@@ -546,6 +601,22 @@
 	const pauseButton = document.getElementById('pauseButton');
 	const pausesDisplay = document.getElementById('pausesDisplay');
 	const levelDisplay = document.getElementById('levelDisplay');
+	const levelCompleteSound = document.getElementById('levelCompleteSound');
+	const closeRulesButton = document.querySelector('.close-rules-button'); // Ensure this is added globally
+
+	// --- NEW LEVEL-RELATED VARIABLES ---
+	let currentLevel = 1; // Start at Level 1
+	const LEVEL_TARGET_WORDS = 10; // Number of words needed to complete each level
+	// Map each level to its time limit (in seconds)
+	const LEVEL_TIMES = {
+	    1: 30, // Level 1: 30 seconds
+	    2: 25, // Level 2: 25 seconds
+	    3: 20, // Level 3: 20 seconds
+	    4: 15, // Level 4: 15 seconds
+	    5: 10  // Level 5: 10 seconds
+	};
+	let inForeverMode = false; // Flag to indicate if player is past Level 5
+	// --- END NEW LEVEL-RELATED VARIABLES ---
 
         // === HELPER FUNCTIONS ===
 
@@ -701,7 +772,9 @@
                     startGame(challengeWord);
                     messageDisplay.textContent = `You've been challenged! Continue the chain from "${challengeWord.toUpperCase()}"!`;
                 }
+		const levelCompleteSound = document.getElementById('levelCompleteSound');
 
+		const rulesSection = document.getElementById('rulesSection');
 
             } catch (error) {
                 console.error("Game Initialization Error:", error);
@@ -899,6 +972,7 @@
 	function displayLevelCompleteScreen(levelCompleted, inForeverMode = false) {
             gameActive = false; // Pause game logic
             stopTimer(); // Stop the timer
+	    levelCompleteSound.play();
 
             let message = "";
             if (inForeverMode) {
@@ -1156,12 +1230,10 @@
 	// Basic validation
 	if (!newWord) {
 	        messageDisplay.textContent = "Please enter a word.";
-	        startTimer(); // Restart timer for next attempt
 	        return;
 	    }
 	if (usedWords.includes(newWord)) {
 	        messageDisplay.textContent = `"${newWord}" already used. Try another.`;
-	        startTimer(); // Restart timer for next attempt
 	        return;
 	    }
 	if (!pronouncing.phonesForWord(newWord)) {
@@ -1372,21 +1444,42 @@
         });
         resetGameButton.addEventListener('click', resetGame);
 
-        showRulesButton.addEventListener('click', () => {
-            if (rulesSection.style.display === 'none') {
-                rulesSection.style.display = 'block';
-                showRulesButton.textContent = 'Hide Rules';
-            } else {
-                rulesSection.style.display = 'none';
-                showRulesButton.textContent = 'Show Rules';
+	showRulesButton.addEventListener('click', () => {
+	// Show the rules overlay
+	rulesSection.style.display = 'flex'; // Use flex to enable centering via CSS
+	showRulesButton.textContent = 'Hide Rules'; // Or "Close Rules"
+	// Optional: You might want to temporarily disable other game inputs/buttons here
+	// to ensure focus is on the rules.
+
+        });
+
+  	// New: Event listener for the close button inside the rules modal
+	closeRulesButton.addEventListener('click', () => {
+	rulesSection.style.display = 'none'; // Hide the rules overlay
+	showRulesButton.textContent = 'Show Rules'; // Reset button text
+	// Optional: Re-enable game inputs/buttons here if you disabled them.
+        });
+
+	// Optional: Close rules if clicked outside the content area (on the overlay itself)
+	rulesSection.addEventListener('click', (event) => {
+	if (event.target === rulesSection) { // Only if the click is directly on the overlay, not its children
+	rulesSection.style.display = 'none';
+	showRulesButton.textContent = 'Show Rules';
             }
         });
+
+	testSoundButton.addEventListener('click', () => {
+	    levelCompleteSound.play().catch(error => {
+	        console.error("Error playing test sound:", error);
+	    });
+	});
 
         copyShareButton.addEventListener('click', copyShareMessage);
         facebookShareButton.addEventListener('click', shareOnFacebook);
         challengeFriendButton.addEventListener('click', generateChallengeLink);
         hintButton.addEventListener('click', getHint); 
-	pauseButton.addEventListener('click', togglePause); 
+	
     </script>
+	<audio id="levelCompleteSound" src="341578__kimp10__success.wav" preload="auto"></audio>
 </body>
 </html>
