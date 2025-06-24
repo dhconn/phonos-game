@@ -114,6 +114,65 @@
             background-color: #5a6268;
         }
        
+	/* Styling for the accordion headers */
+	.accordion-header {
+	    background-color: #f2f2f2; /* Light gray background */
+	    color: #333;
+	    cursor: pointer;
+	    padding: 15px;
+	    width: 100%;
+	    border: none;
+	    text-align: left;
+	    outline: none;
+	    font-size: 1.1em;
+	    transition: background-color 0.2s ease;
+	    border-bottom: 1px solid #ddd; /* Separator line */
+	    display: flex; /* For optional arrow/icon alignment */
+	    justify-content: space-between; /* Pushes arrow to the right */
+	    align-items: center;
+	}
+
+	.accordion-header:hover {
+	    background-color: #e0e0e0; /* Darker on hover */
+	}
+
+	/* Optional: Add a visual indicator for open/closed state */
+	.accordion-header::after {
+	    content: '\02795'; /* Plus sign unicode */
+	    font-size: 0.8em;
+	    color: #777;
+	    float: right;
+	    margin-left: 5px;
+	    transition: transform 0.2s ease;
+	}
+
+	.accordion-header.active::after {
+	    content: "\2796"; /* Minus sign unicode */
+	    transform: rotate(0deg); /* No rotation for plus/minus */
+	}
+
+	/* Styling for the accordion content */
+	.accordion-content {
+	    padding: 0 15px; /* Padding for the content inside */
+	    background-color: #f9f9f9; /* Slightly different background for content */
+	    max-height: 0; /* Initially hidden */
+	    overflow: hidden; /* Hide overflow */
+	    transition: max-height 0.3s ease-out, padding 0.3s ease-out; /* Smooth transition */
+	    border-bottom: 1px solid #eee; /* Separator line for content */
+	}
+
+	/* Styling for the active (open) content */
+	.accordion-header.active + .accordion-content {
+	    max-height: 9999px; /* Adjust this value! Needs to be larger than max possible content height */
+	    padding: 15px; /* Apply padding when active */
+	}
+
+	/* Optional: Remove bottom border for the last item for a cleaner look */
+	.accordion-item:last-child .accordion-header,
+	.accordion-item:last-child .accordion-content {
+	    border-bottom: none;
+	}
+
 	/* Rules Section as a Modal Overlay */
         #rulesSection {
             display: none; /* Hidden by default */
@@ -125,10 +184,14 @@
             height: 100%;
             overflow: auto; /* Enable scroll if content is too long */
             background-color: rgba(0, 0, 0, 0.8); /* Black w/ opacity - dark overlay */
-            display: flex; /* Use flexbox to center content */
             align-items: center; /* Center vertically */
             justify-content: center; /* Center horizontally */
         }
+
+	/* NEW CSS RULE: This class will make the rules section visible and use flexbox */
+	#rulesSection.active-modal {
+	    display: flex;
+	}
 
         .rules-content {
             background-color: #E0F2F7; /* White background for the content box */
@@ -441,25 +504,38 @@
 
     </div>
 
-    <div id="rulesSection" style="display: none;">
+    <div id="rulesSection">
       <div class="rules-content">
         <span class="close-rules-button">&times;</span>
-            <h4>How to Play Phono:</h4> <ol>
-                <li>The game starts with a word.</li>
-                <li>Your goal is to type a new word that **shares a common sound chunk** with the previous word.</li>
+	   <div class="accordion-item">
+	      <button class="accordion-header">How to Play Phono</button>
+	      <div class="accordion-content">
+               <ol>
+		<li>The game starts with a word.</li>
+		<li>Your goal is to type a new word that **shares a common sound chunk** with the previous word.</li>
                 <li>**Sound Chunk Rule:** The shared sound chunk must contain at least one vowel phoneme. That means a sound with a vowel and consonant, such as the "AP" sound in "NAPKIN." A consonant alone won't cut it: For example, "BIKER" won't work as the next word after "CATNAP," even though they share the "K" (or hard C) sound.</li> 
 		<li>**Syllable Rule:** Your new word must have **at least 2 syllables**.</li>
                 <li>**No Repeats:** You cannot use the same word twice in one game.</li>
                 <li>You have limited time per turn!</li>
-            </ol>
-            <h4>Climb through the Levels:</h4>
-	    <ul>
+               </ol>
+	</div>
+     </div>
+
+	<div class="accordion-item">
+        <button class="accordion-header">Climbing Through the Levels</button>
+        <div class="accordion-content">
+            <ul>
 		<li>It takes 10 successful plays to complete Level 1.</li>
 		<li>Each level takes 10 more plays, but you lose 5 seconds per word.</li>
 		<li>Try to get through all five levels - if you can.</li>
 		<li>After that you can play "forever mode" as long as you're able.</li>
 	    </ul>
-            <h4>Scoring:</h4>
+	</div>
+     </div>
+
+	    <div class="accordion-item">
+		<button class="accordion-header">Scoring</button>
+	        <div class="accordion-content">
             <ul>
                 <li>Base points for each correct word.</li>
                 <li>**Time Bonus:** Earn extra points for submitting words quickly.</li>
@@ -467,14 +543,20 @@
                 <li>**Sound Chunk bonus:** Get more points for words that share more sound chunks!</li>
                 <li>**Hints:** Cost 100 points each.</li>
             </ul>
-            <h4>Game Over:</h4>
-            <ul>
+	</div>
+     </div>
+
+	    <div class="accordion-item">
+        	<button class="accordion-header">Game Over</button>
+	        <div class="accordion-content">            
+	    <ul>
                 <li>If you run out of time - although you can purchase a "Pause" for 100 points. </li>
                 <li>If your word does not share a valid sound with the previous word.</li>
                 <li>If your word has fewer than 2 syllables.</li>
             </ul>
             <p>Good luck and have a Phantastic Phono!</p>
         </div>
+    </div>
 
     <script>
         // === PRONOUNCING.JS MODULE (EMBEDDED) ===
@@ -1444,27 +1526,53 @@
         });
         resetGameButton.addEventListener('click', resetGame);
 
+    	// === ACCORDION LOGIC (Should be here once) ===
+	    const accordionHeaders = document.querySelectorAll('.accordion-header');
+	    accordionHeaders.forEach(header => {
+	        header.addEventListener('click', () => {
+	            header.classList.toggle('active');
+	            const content = header.nextElementSibling;
+	      if (content.style.maxHeight) {
+	                content.style.maxHeight = null;
+	                content.style.padding = '0 15px';
+                   } else {
+       	         content.style.maxHeight = content.scrollHeight + 'px';
+	         content.style.padding = '15px';
+            }
+        });
+    });
 	showRulesButton.addEventListener('click', () => {
-	// Show the rules overlay
-	rulesSection.style.display = 'flex'; // Use flex to enable centering via CSS
-	showRulesButton.textContent = 'Hide Rules'; // Or "Close Rules"
-	// Optional: You might want to temporarily disable other game inputs/buttons here
-	// to ensure focus is on the rules.
+            // Check if rules section is currently hidden by checking for the 'active-modal' class
+            if (!rulesSection.classList.contains('active-modal')) {
+                rulesSection.classList.add('active-modal'); // Add class to show as flex
+                showRulesButton.textContent = 'Hide Rules';
 
+                // This section resets the accordions to ensure they are closed when the modal opens
+                document.querySelectorAll('.accordion-header').forEach(header => {
+                    header.classList.remove('active'); // Remove 'active' class from all headers
+                    const content = header.nextElementSibling;
+                    if (content) {
+                        content.style.maxHeight = null; // Collapse content by removing inline max-height
+                        content.style.padding = '0 15px'; // Ensure padding is collapsed
+                    }
+                });
+
+            } else { // If rules section is currently visible
+                rulesSection.classList.remove('active-modal'); // Remove class to hide
+                showRulesButton.textContent = 'Show Rules';
+            }
         });
-
-  	// New: Event listener for the close button inside the rules modal
+	// New: Event listener for the close button inside the rules modal
 	closeRulesButton.addEventListener('click', () => {
-	rulesSection.style.display = 'none'; // Hide the rules overlay
+	rulesSection.classList.remove('active-modal'); // Hide the rules overlay
 	showRulesButton.textContent = 'Show Rules'; // Reset button text
-	// Optional: Re-enable game inputs/buttons here if you disabled them.
-        });
+	});
 
 	// Optional: Close rules if clicked outside the content area (on the overlay itself)
 	rulesSection.addEventListener('click', (event) => {
 	if (event.target === rulesSection) { // Only if the click is directly on the overlay, not its children
-	rulesSection.style.display = 'none';
-	showRulesButton.textContent = 'Show Rules';
+	    rulesSection.classList.remove('active-modal');
+	          showRulesButton.textContent = 'Show Rules';
             }
         });
 
@@ -1478,6 +1586,43 @@
         facebookShareButton.addEventListener('click', shareOnFacebook);
         challengeFriendButton.addEventListener('click', generateChallengeLink);
         hintButton.addEventListener('click', getHint); 
+
+// Add this new JavaScript code
+document.addEventListener('DOMContentLoaded', () => {
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            // Toggle the 'active' class on the clicked header
+            header.classList.toggle('active');
+
+            // Get the sibling content div
+            const content = header.nextElementSibling;
+
+            // Toggle the display of the content
+            if (content.style.maxHeight) {
+                // If it has a maxHeight (is open), close it
+                content.style.maxHeight = null; // Or '0px'
+                content.style.padding = '0 15px'; // Collapse padding
+            } else {
+                // If it's closed, open it to its scrollHeight
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.padding = '15px'; // Apply padding when opened
+            }
+
+            // Optional: Close other open accordion items (uncomment if desired)
+            /*
+            accordionHeaders.forEach(otherHeader => {
+                if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                    otherHeader.classList.remove('active');
+                    otherHeader.nextElementSibling.style.maxHeight = null; // Or '0px'
+                    otherHeader.nextElementSibling.style.padding = '0 15px';
+                }
+            });
+            */
+        });
+    });
+});
 	
     </script>
 	<audio id="levelCompleteSound" src="341578__kimp10__success.wav" preload="auto"></audio>
