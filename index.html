@@ -1599,43 +1599,6 @@
         challengeFriendButton.addEventListener('click', generateChallengeLink);
         hintButton.addEventListener('click', getHint); 
 
-// Add this new JavaScript code
-document.addEventListener('DOMContentLoaded', () => {
-    const accordionHeaders = document.querySelectorAll('.accordion-header');
-
-    accordionHeaders.forEach(header => {
-        header.addEventListener('click', () => {
-            // Toggle the 'active' class on the clicked header
-            header.classList.toggle('active');
-
-            // Get the sibling content div
-            const content = header.nextElementSibling;
-
-            // Toggle the display of the content
-            if (content.style.maxHeight) {
-                // If it has a maxHeight (is open), close it
-                content.style.maxHeight = null; // Or '0px'
-                content.style.padding = '0 15px'; // Collapse padding
-            } else {
-                // If it's closed, open it to its scrollHeight
-                content.style.maxHeight = content.scrollHeight + 'px';
-                content.style.padding = '15px'; // Apply padding when opened
-            }
-
-            // Optional: Close other open accordion items (uncomment if desired)
-            /*
-            accordionHeaders.forEach(otherHeader => {
-                if (otherHeader !== header && otherHeader.classList.contains('active')) {
-                    otherHeader.classList.remove('active');
-                    otherHeader.nextElementSibling.style.maxHeight = null; // Or '0px'
-                    otherHeader.nextElementSibling.style.padding = '0 15px';
-                }
-            });
-            */
-        });
-    });
-});
-	
     </script>
 </body>
 </html>
