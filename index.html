@@ -477,7 +477,7 @@
         </div>
 
         <div id="hintSection">
-            <button id="hintButton" disabled>Get Hint (Cost: 100 pts)</button>
+            <button id="hintButton" disabled>Get Hint (Cost: 200 pts)</button>
             <p id="hintDisplay" class="message"></p>
         </div>
 
@@ -541,7 +541,7 @@
                 <li>**Time Bonus:** Earn extra points for submitting words quickly.</li>
                 <li>**Syllable Bonus:** Get bonus points for longer words (more syllables).</li>
                 <li>**Sound Chunk bonus:** Get more points for words that share more sound chunks!</li>
-                <li>**Hints:** Cost 100 points each.</li>
+                <li>**Hints:** Cost 200 points each.</li>
             </ul>
 	</div>
      </div>
@@ -1396,7 +1396,7 @@
 
         // === HINT FUNCTIONALITY ===
         function getHint() {
-            const HINT_COST = 100;
+            const HINT_COST = 200;
 
             console.log("getHint called. Current score:", currentScore, "Game active:", gameActive, "Current word:", currentWord);
             if (!gameActive) {
