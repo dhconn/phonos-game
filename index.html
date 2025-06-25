@@ -1054,7 +1054,14 @@
 	function displayLevelCompleteScreen(levelCompleted, inForeverMode = false) {
             gameActive = false; // Pause game logic
             stopTimer(); // Stop the timer
-	    levelCompleteSound.play();
+	// Play level complete sound if the element is found
+    	if (levelCompleteSound) {
+        levelCompleteSound.play().catch(error => {
+            console.error("Error playing level complete sound:", error);
+        });
+    } else {
+        console.warn("Level complete sound element not found when trying to play it!");
+    }
 
             let message = "";
             if (inForeverMode) {
@@ -1577,12 +1584,16 @@
         });
 
 	testSoundButton.addEventListener('click', () => {
-	    levelCompleteSound.play().catch(error => {
-	        console.error("Error playing test sound:", error);
-	    });
+  		if (levelCompleteSound) {
+		        levelCompleteSound.play().catch(error => {
+		            console.error("Error playing test sound:", error);
+        		});
+    		} else {
+        			console.warn("Test sound element not found!");
+    		}
 	});
-
-        copyShareButton.addEventListener('click', copyShareMessage);
+        
+	copyShareButton.addEventListener('click', copyShareMessage);
         facebookShareButton.addEventListener('click', shareOnFacebook);
         challengeFriendButton.addEventListener('click', generateChallengeLink);
         hintButton.addEventListener('click', getHint); 
@@ -1625,6 +1636,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 	
     </script>
-	// <audio id="levelCompleteSound" src="341578__kimp10__success.wav" preload="auto"></audio>
+	<audio id="levelCompleteSound" src="341578__kimp10__success.wav" preload="auto"></audio>
 </body>
 </html>
