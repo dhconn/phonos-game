@@ -683,7 +683,8 @@
 	const pauseButton = document.getElementById('pauseButton');
 	const pausesDisplay = document.getElementById('pausesDisplay');
 	const levelDisplay = document.getElementById('levelDisplay');
-	const levelCompleteSound = document.getElementById('levelCompleteSound');
+	const levelCompleteSound = new Audio('341578__kimp10__success.wav');
+	levelCompleteSound.preload = 'auto'; // This line is optional but good practice for preloading
 	const closeRulesButton = document.querySelector('.close-rules-button'); // Ensure this is added globally
 
 	// --- NEW LEVEL-RELATED VARIABLES ---
@@ -1636,6 +1637,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 	
     </script>
-	<audio id="levelCompleteSound" src="341578__kimp10__success.wav" preload="auto"></audio>
 </body>
 </html>
