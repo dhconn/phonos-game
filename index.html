@@ -477,7 +477,7 @@
         </div>
 
         <div id="hintSection">
-            <button id="hintButton" disabled>Get Hint (Cost: 200 pts)</button>
+            <button id="hintButton">Get Hint (Cost: 200 pts)</button>
             <p id="hintDisplay" class="message"></p>
         </div>
 
@@ -559,6 +559,8 @@
     </div>
 
     <script>
+        console.log('--- SCRIPT START ---'); // VERY EARLY LOG TO CONFIRM SCRIPT EXECUTION
+
         // === PRONOUNCING.JS MODULE (EMBEDDED) ===
         // This IIFE contains the dictionary logic for pronunciation and rhymes.
         window.pronouncing = (function () {
@@ -678,14 +680,16 @@
         const copyShareButton = document.getElementById('copyShareButton');
         const facebookShareButton = document.getElementById('facebookShareButton');
         const challengeFriendButton = document.getElementById('challengeFriendButton');
-        const hintButton = document.getElementById('hintButton'); 
+        const hintButton = document.getElementById('hintButton');
+	    console.log('DEBUG: hintButton element found:', hintButton); // Your debug log
         const hintDisplay = document.getElementById('hintDisplay'); 
-	const pauseButton = document.getElementById('pauseButton');
-	const pausesDisplay = document.getElementById('pausesDisplay');
-	const levelDisplay = document.getElementById('levelDisplay');
-	const levelCompleteSound = new Audio('341578__kimp10__success.wav');
-	levelCompleteSound.preload = 'auto'; // This line is optional but good practice for preloading
-	const closeRulesButton = document.querySelector('.close-rules-button'); // Ensure this is added globally
+	    const pauseButton = document.getElementById('pauseButton');
+	    const pausesDisplay = document.getElementById('pausesDisplay');
+	    const levelDisplay = document.getElementById('levelDisplay');
+	    const levelCompleteSound = new Audio('341578__kimp10__success.wav');
+	    levelCompleteSound.preload = 'auto'; // This line is optional but good practice for preloading
+	    const closeRulesButton = document.querySelector('.close-rules-button'); // Ensure this is added globally
+        // No testSoundButton declared here, assuming it's not needed or not in HTML
 
 	// --- NEW LEVEL-RELATED VARIABLES ---
 	let currentLevel = 1; // Start at Level 1
@@ -855,9 +859,9 @@
                     startGame(challengeWord);
                     messageDisplay.textContent = `You've been challenged! Continue the chain from "${challengeWord.toUpperCase()}"!`;
                 }
-		const levelCompleteSound = document.getElementById('levelCompleteSound');
-
-		const rulesSection = document.getElementById('rulesSection');
+                // Removed redundant/problematic redeclarations here:
+                // const levelCompleteSound = document.getElementById('levelCompleteSound'); // REMOVED
+                // const rulesSection = document.getElementById('rulesSection'); // REMOVED
 
             } catch (error) {
                 console.error("Game Initialization Error:", error);
@@ -1066,9 +1070,9 @@
 
             let message = "";
             if (inForeverMode) {
-                message = `🎉 CONGRATULATIONS! You've conquered all levels! 🎉\nNow entering FOREVER MODE! See how far you can go!`;
+                message = `脂 CONGRATULATIONS! You've conquered all levels! 脂\nNow entering FOREVER MODE! See how far you can go!`;
             } else {
-                message = `🎉 LEVEL ${levelCompleted} COMPLETE! 🎉\nGet ready for Level ${levelCompleted + 1}!`;
+                message = `脂 LEVEL ${levelCompleted} COMPLETE! 脂\nGet ready for Level ${levelCompleted + 1}!`;
             }
 
             messageDisplay.textContent = message;
@@ -1349,7 +1353,7 @@
                // Calculate bonuses
 	        const newWordSyllables = syllable(newWord);
 	        if (newWordSyllables < 2) {
-	            endGame(`Game over! "${newWord}" needs ≥2 syllables.`);
+	            endGame(`Game over! "${newWord}" needs 竕･2 syllables.`);
 	            return;
 	        }
 
@@ -1420,7 +1424,8 @@
             messageDisplay.textContent = `${HINT_COST} points deducted for a hint!`;
 
             let foundHintWord = null;
-            const maxHintSearchAttempts = 5000; // Increased for better chance of finding a word
+            let foundHintChunk = null; // New variable to store the found chunk
+	    const maxHintSearchAttempts = 5000; // Increased for better chance of finding a word
             const dictionaryWords = Object.keys(pronouncing.getDictionary());
             let attempts = 0;
 
@@ -1445,14 +1450,15 @@
 
                     if (commonChunk) {
                         foundHintWord = potentialHintWord;
+		                   foundHintChunk = commonChunk; // Store the common chunk
                         break; 
                     }
                     attempts++;
                 }
 
-                if (foundHintWord) {
-                    hintDisplay.textContent = `Hint: Try "${foundHintWord.toUpperCase()}"`;
-                    console.log("Hint found:", foundHintWord);
+                if (foundHintWord && foundHintChunk) {
+                    hintDisplay.textContent = `Hint: Try a word with the sound "${foundHintChunk.toUpperCase()}" (e.g., "${foundHintWord.toUpperCase()}")`;
+                    console.log("Hint found:", foundHintWord, "Chunk:", foundHintChunk);
                 } else {
                     hintDisplay.textContent = "Could not find an easy hint right now. Keep trying!";
                     console.log(`No hint found after ${attempts} attempts for current word "${currentWord}".`);
@@ -1584,6 +1590,11 @@
             }
         });
 
+    // REMOVED testSoundButton.addEventListener as it was undefined.
+    // If you have a <button id="testSoundButton"> in your HTML,
+    // you need to add `const testSoundButton = document.getElementById('testSoundButton');`
+    // to the DOM ELEMENTS section, AND then uncomment/add this event listener back.
+	/*
 	testSoundButton.addEventListener('click', () => {
   		if (levelCompleteSound) {
 		        levelCompleteSound.play().catch(error => {
@@ -1593,6 +1604,7 @@
         			console.warn("Test sound element not found!");
     		}
 	});
+    */
         
 	copyShareButton.addEventListener('click', copyShareMessage);
         facebookShareButton.addEventListener('click', shareOnFacebook);
